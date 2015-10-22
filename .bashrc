@@ -80,7 +80,17 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 #                 tag/branch to display, you'll see the commit id instead. 
 #GIT_PS1_DESCRIBE_STYLE="branch"
 
+MING_PS1_MSYSTEM_COLOR="$(tput setaf 5)"
+BASH_PS1_USERNAME_COLOR="$(tput setaf 2)"
+BASH_PS1_HOSTNAME_COLOR="$(tput setaf 2)"
+BASH_PS1_PWD_COLOR="$(tput setaf 3)"
+BASH_PS1_PROMPT_COLOR="$(tput sgr0)"
+
 # Fixup git-bash in non login env
 shopt -q login_shell || . /etc/profile.d/git-prompt.sh
+
+function __bash_ps1() {
+	return;
+}
 
 PROMPT_COMMAND='__git_ps1 "$(tput setaf 2)\u@\h $(tput setaf 5)$MSYSTEM $(tput setaf 3)\w$(tput sgr0)" "\n\\\$ "'
