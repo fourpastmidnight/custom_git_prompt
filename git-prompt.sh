@@ -103,7 +103,8 @@ printf -v __git_printf_supports_v -- '%s' yes >/dev/null 2>&1
 __git_ps1_show_upstream ()
 {
 	local key value
-	local svn_remote svn_url_pattern count n ahead_glyph behind_glyph diverged_glyph upstream_separator_glyph up_to_date_glyph
+	local svn_remote svn_url_pattern count n
+	local ahead_glyph behind_glyph diverged_glyph upstream_separator_glyph up_to_date_glyph
 	local upstream=git legacy="" verbose="" name=""
 
 	svn_remote=()
