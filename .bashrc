@@ -109,61 +109,22 @@ function __bash_ps1()
 	local exit=$?
 	
 	local user_color sep_color host_color pwd_color
-	local show_git_prompt git_prompt_printf_format
+	local show_git_prompt 
+	local git_printf_format=" (%s)"
 	local ps1pc_start=""
 	local ps1pc_end=""
 	local printf_format="%s"
 	
 	case "$#" in
 		0|1|2)	printf_format="${1:-$printf_format}"
-			git_prompt_printf_format="${2:- (%s)}"
+			git_printf_format="${2:- (%s)}"
 		;;
 		*)		ps1pc_start="$1"
 			ps1pc_end="$2"
 			printf_format="${3:-$printf_format}"
-			git_prompt_printf_format="${4:- (%s)}"
+			git_printf_format="${4:-$git_printf_format}"
 		;;
 	esac
-	
-	# Shamelessly copied the below from git-prompt.sh -- may not need this, and if not, I'll remove it.
-	#
-	#------------------------------------------------------------
-	# ps1_expanded:  This variable is set to 'yes' if the shell
-	# subjects the value of PS1 to parameter expansion:
-	#
-	#   * bash does unless the promptvars option is disabled
-	#   * zsh does not unless the PROMPT_SUBST option is set
-	#   * POSIX shells always do
-	#
-	# If the shell would expand the contents of PS1 when drawing
-	# the prompt, a raw ref name must not be included in PS1.
-	# This protects the user from arbitrary code execution via
-	# specially crafted ref names.  For example, a ref named
-	# 'refs/heads/$(IFS=_;cmd=sudo_rm_-rf_/;$cmd)' might cause the
-	# shell to execute 'sudo rm -rf /' when the prompt is drawn.
-	#
-	# Instead, the ref name should be placed in a separate global
-	# variable (in the __git_ps1_* namespace to avoid colliding
-	# with the user's environment) and that variable should be
-	# referenced from PS1.  For example:
-	#
-	#     __git_ps1_foo=$(do_something_to_get_ref_name)
-	#     PS1="...stuff...\${__git_ps1_foo}...stuff..."
-	#
-	# If the shell does not expand the contents of PS1, the raw
-	# ref name must be included in PS1.
-	#
-	# The value of this variable is only relevant when in pcmode.
-	#
-	# Assume that the shell follows the POSIX specification and
-	# expands PS1 unless determined otherwise.  (This is more
-	# likely to be correct if the user has a non-bash, non-zsh
-	# shell and safer than the alternative if the assumption is
-	# incorrect.)
-	#
-	local bash_ps1_expanded=yes
-	[ -z "$ZSH_VERSION" ] || [[ -o PROMPT_SUBST ]] || bash_ps1_expanded=no
-	[ -z "$BASH_VERSION" ] || shopt -q promptvars || bash_ps1_expanded=no
 	
 	local user="${BASH_PS1_USERNAME:-\\u}"
 	local user_color="${BASH_PS1_USERNAME_COLOR:-$(tput setaf 2)}"
@@ -190,17 +151,102 @@ function __bash_ps1()
 	
 	# PROMPT_COMMAND='__git_ps1 "\n$(tput setaf 170)$MSYSTEM $(tput setaf 34)\u@\h\n$(tput setaf 15)PWD: $(tput setaf 111)\w$(tput sgr0)" "\n\\\$ " "\n$(tput setaf 15)GIT:$(tput sgr0) %s$(tput sgr0)"'
 	#
+	# __bash_ps1 {1}:ps1pc_start {2}:ps1pc_end {3}:print_format [{4}:git_print_format]
+	# __bash_ps1 {1}:print_format [{2}:git_print_format]
 	# 
 	# Default Command Prompt examples:
-	# PROMPT_COMMAND='__bash_ps1 "%u%s%h $(tput setaf 170)$MSYSTEM %w%$ "'			# <---- Equivalent to the next line:
-	# PROMPT_COMMAND='__bash_ps1 "%u%s%h $(tput setaf 170)$MSYSTEM %w%$ " "(%s)"'
+	# PROMPT_COMMAND='__bash_ps1 "%u%z%h $(tput setaf 170)$MSYSTEM %w%p "'			# <---- Equivalent to the next line:
+	# PROMPT_COMMAND='__bash_ps1 "%u%z%h $(tput setaf 170)$MSYSTEM %w%p " "(%s)"'
 	#
 	# Example of my custom prompt, as shown in the first line of this comment:
-	# PROMPT_COMMAND='__bash_ps1 "\n$(tput setaf 170)$MSYSTEM " "" "%u%s%h\n$(tput setaf 15)PWD: %w%$" "\n$(tput setaf 15)GIT: $(tput sgr0) %s$(tput sgr0)"'
+	# PROMPT_COMMAND='__bash_ps1 "\n$(tput setaf 170)$MSYSTEM " "" "%u%z%h\n$(tput setaf 15)PWD: %w%p" "\n$(tput setaf 15)GIT: $(tput sgr0) %s$(tput sgr0)"'
 	#
 	# The goal, then, is to have __bash_ps1 act much like __git_ps1 in order to build up your custom shell prompt.
 	
-	return;
+	# This block should be removed before committing to 'master', as it's just a sanity check that the various prompt parts are being
+	# grabbed correctly from the command line arguments to __bash_ps1.
+	if [ "$#" -ge "3" ]; then
+		echo "Three or more arguments."
+		echo "ps1pc_start=$ps1pc_start"
+		echo "ps1pc_end=$ps1pc_end"
+		echo "printf_format=$printf_format"
+		echo "git_printf_format=$git_printf_format"
+	elif [ "$#" -gt "0" ] && [ "$#" -lt "3" ]; then
+		echo "Less than 3 arguments, but at least 1."
+		echo "ps1pc_start=$ps1pc_start"
+		echo "ps1pc_end=$ps1pc_end"
+		echo "printf_format=$printf_format"
+		echo "git_printf_format=$git_printf_format"
+	else
+		echo "Zero arguments"
+		echo "ps1pc_start=$ps1pc_start"
+		echo "ps1pc_end=$ps1pc_end"
+		echo "printf_format=$printf_format"
+		echo "git_printf_format=$git_printf_format"
+	fi
+	
+	# ANOTHER DEBUG STRING
+	echo "prompt: $ps1pc_start$printf_format$git_printf_format$ps1pc_end"
+	# __bash_ps1 "\$(tput setaf 170)\$MSYSTEM " "" "%u%z%h\\n\$(tput setaf 15)PWD: %w%v%p" "\\n\$(tput setaf 15)GIT: %s"
+	
+	
+	# Need to parse the bash prompt format string (printf_format)
+	echo -e "\nReplacing %u in \$printf_format:"
+	printf_format2="${printf_format/\%u/\$\{user_color\}\$\{user\}}"
+	echo "$printf_format2"
+	
+	echo -e "\nReplacing %z in \$printf_format:"
+	printf_format2="${printf_format2/\%z/\$\{sep_color\}\$\{sep\}}"
+	echo "$printf_format2"
+	
+	echo -e "\nReplacing %h in \$printf_format:"
+	printf_format2="${printf_format2/\%h/\$\{host_color\}\$\{host\}}"
+	echo "$printf_format2"
+	
+	echo -e "\nReplacing %w in \$printf_format:"
+	printf_format2="${printf_format2/\%w/\$\{pwd_color\}\$\{pwd\}}"
+	echo "$printf_format2"
+	
+	if [[ -n "$git_printf_format" ]]; then
+		echo -e "\n\$git_printf_format is defined. Splitting prompt into respective parts for call to __git_ps1."
+		ps1pc_end="\${prompt_delimiter_color}\${prompt_delimiter}"
+		printf_format2="${printf_format2/\%p/}"
+		printf_format2="${printf_format2/\%v/}"
+		echo "'__git_ps1 \"\${ps1pc_start}\" \"\${ps1pc_end}\" \"\${printf_format}\" \"\${git_printf_format}\"'"
+		echo "\$ps1pc_start: ${ps1pc_start}"
+		echo "\$printf_format: ${printf_format2}"
+		echo "\$ps1pc_end: ${ps1pc_end}"
+		echo "__git_ps1: ${ps1pc_start}${printf_format2}${git_printf_format}${ps1pc_end}"
+	else
+		echo -e "\n$git_printf_format not defined. Replacing %v with an empty string and expanding %p."
+		printf_format="${printf_format2/\%p/\$\{prompt_delimiter_color\}\$\{prompt_delimiter\}}"
+		printf_format="${printf_format2/\%v/}"
+		echo "$printf_format2"
+	fi
+	
+	local bash_ps1_user="${user_color}${user}"
+	local bash_ps1_sep="${sep_color}${sep}"
+	local bash_ps1_host="${host_color}${host}"
+	local bash_ps1_pwd="${pwd_color}${pwd}"
+	local bash_ps1_delimiter="${prompt_delimiter_color}${prompt_delimiter}"
+	
+	#printf_format="${printf_format/\%u/${bash_ps1_user}/}"
+	#printf_format="${printf_format/\%z/${bash_ps1_sep}/}"
+	#printf_format="${printf_format/\%h/${bash_ps1_host}/}"
+	#printf_format="${printf_format/\%w/${bash_ps1_pwd}/}"	
+	#printf_format="${printf_format/\%p/${bash_ps1_delimiter}/}"
+	
+	# OK, so, at some point, we have to split the printf_format (which is the format string to be used for the bash prompt)
+	# at the point where the git prompt should be displayed (denoted by %v in the bash printf_format format string).
+	# Then, we need to make the necessary substitutions for the various "format parameters" for user, host, etc.
+	# in the bash prompt format string(s). These tokens could appear before or after the git prompt.
+	local after_git_prompt="${printf_format##*\%v}"
+	echo "after_git_prompt = ${after_git_prompt}"
+	before_git_prompt="${printf_format%\%v*}"
+	echo "before_git_prompt = ${before_git_prompt}"
+	echo "printf_format: ${printf_format}"
+	
+	return $exit;
 }
 
 PROMPT_COMMAND='__git_ps1 "$(tput setaf 2)\u@\h $(tput setaf 5)$MSYSTEM $(tput setaf 3)\w$(tput sgr0)" "\n\\\$ "'
