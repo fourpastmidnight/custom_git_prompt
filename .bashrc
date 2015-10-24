@@ -83,170 +83,236 @@ GIT_PS1_SHOWUPSTREAM="auto git verbose"
 BASH_PS1_SHOW_USERNAME=1
 BASH_PS1_SHOW_HOSTNAME=1
 BASH_PS1_SHOW_PWD=1
-BASH_PS1_SHOW_GIT_PROMPT=1
+BASH_PS1_SHOW_COLORIZED_PROMPT=1
 
-BASH_PS1_USERNAME_COLOR="$(tput setaf 2)"
-BASH_PS1_HOSTNAME_COLOR="$(tput setaf 2)"
-BASH_PS1_USER_HOST_SEPARATOR_COLOR="$(tput setaf 2)"
-BASH_PS1_PWD_COLOR="$(tput setaf 3)"
-BASH_PS1_PROMPT_COLOR="$(tput sgr0)"
+#BASH_PS1_USERNAME_COLOR="$(tput setaf 2)"
+#BASH_PS1_HOSTNAME_COLOR="$(tput setaf 2)"
+#BASH_PS1_USER_HOST_SEPARATOR_COLOR="$(tput setaf 2)"
+#BASH_PS1_PWD_COLOR="$(tput setaf 3)"
+#BASH_PS1_PROMPT_COLOR="$(tput sgr0)"
 
-BASH_PS1_USERNAME='\u'
-BASH_PS1_HOSTNAME='\h'
-BASH_PS1_USER_HOST_SEPARATOR="@"
-BASH_PS1_PWD="\n$(tput setaf 15)PWD: $(tput sgr0)\\w"
+#BASH_PS1_USERNAME='\u'
+#BASH_PS1_HOSTNAME='\h'
+#BASH_PS1_USER_HOST_SEPARATOR="@"
+#BASH_PS1_PWD="\n$(tput setaf 15)PWD: $(tput sgr0)\\w"
 
-BASH_PS1_USER_HOST_SEPARATOR="@"
-BASH_PS1_PROMPT="\n\\\$ "
+#BASH_PS1_USER_HOST_SEPARATOR="@"
+#BASH_PS1_PROMPT="\n\\\$ "
+#BASH_PS1_FORMAT_STRING=
 
 # Fixup git-bash in non login env
 shopt -q login_shell || . /etc/profile.d/git-prompt.sh
 
-#__bash_ps1 ps1pc_start, ps1pc_end, prompt_format_string, git_prompt_format_string
+function __bash_ps1_is_declared()
+{
+	case $(declare | grep -c "$1=") in
+		0)		return 1;;
+		*)		return 0;;
+	esac
+}
+
+function __bash_ps1_colorize_promptstring()
+{
+	local user_host_color="$(tput setaf 2)"
+	local pwd_color="$(tput setaf 3)"
+	local prompt_color="$(tput sgr0)"
+	
+	# if any bash prompt color variable is not declared, then use the default color.
+	# else, if it is declared and is null, or it is defined but empty, then use $(tput sgr0), otherwise, use the given color.
+	#
+	# Additionally, you'll notice that we're trying to preserve any other colorizing that may be occurring
+	# within any of the prompt variables. For example, if you specify BASH_PS1_USERNAME="$(tput setaf 14)Hello! \u"
+	# and subsequently also set BASH_PS1_USERNAME_COLOR="$(tput setaf 2)", then you would expect that
+	# Hello! would still by displayed in cyan while the username would be displayed in green.
+	if ! __bash_ps1_is_declared BASH_PS1_USERNAME_COLOR; then
+		u="${u/\\u/$user_host_color\\u}"
+	else
+		u="${u/\\u/${BASH_PS1_USERNAME_COLOR:-$(tput sgr0)}\\u}"
+	fi
+	
+	# TL;DR : Don't need to "preserve" color formatting for the username/hostname separator character.
+	#
+	# Since this is meant to be a separator character (or characters) between the
+	# username and hostname, no "color preservation" needs to be done.
+	# If the user wants a highly customized, colorized username/hostname separator,
+	# they would simply set BASH_PS1_USER_HOST_SEPARATOR to some complex string embedded
+	# with color info. Additionalliy, BASH_PS1_USER_HOST_SEPARATOR_COLOR provides the overall
+	# base color for the username/hostname separator.
+	if ! __bash_ps1_is_declared BASH_PS1_USER_HOST_SEPARATOR_COLOR; then
+		z="$user_host_color$z"
+	else
+		z="${BASH_PS1_USER_HOST_SEPARATOR_COLOR-$(tput sgr0)}$z"
+	fi
+	
+	if ! __bash_ps1_is_declared BASH_PS1_HOSTNAME_COLOR; then
+		h="${h/\\h/$user_host_color\\h}"
+	else
+		h="${h/\\h/${BASH_PS1_HOSTNAME_COLOR:-$(tput sgr0)}\\h}"
+	fi
+	
+	if ! __bash_ps1_is_declared BASH_PS1_PWD_COLOR; then
+		w="${w/\\w/$pwd_color\\w}"
+	else
+		w="${w/\\w/${BASH_PS1_PWD_COLOR:-$(tput sgr0)}\\w}"
+	fi
+	
+	p="${BASH_PS1_PROMPT_COLOR-$prompt_color}$p$(tput sgr0)"
+}
+
+function __bash_ps1_printf_format_contains()
+{
+	case $(echo "$1" | grep -c $2) in
+		0)		return 1 ;;
+		*)		return 0 ;;
+	esac
+}
+
+function __bash_ps1_is_function_defined()
+{
+	declare -Ff "$1" >/dev/null
+}
+
 function __bash_ps1()
 {
-	# Preserve exit status
+	# Preserve exit status.
 	local exit=$?
 	
-	local user_color sep_color host_color pwd_color
-	local show_git_prompt 
 	local git_printf_format=" (%s)"
-	local ps1pc_start=""
-	local ps1pc_end=""
-	local printf_format="%s"
+	local bash_ps1pc_start=""
+	local bash_ps1pc_end=""
+	local bash_printf_format="%u%z%h%w%v%p"
+	local git_printf_format
 	
 	case "$#" in
-		0|1|2)	printf_format="${1:-$printf_format}"
-			git_printf_format="${2:- (%s)}"
+		0|1|2)		bash_printf_format="${1:-$printf_format}"
+					git_printf_format="$2"
 		;;
-		*)		ps1pc_start="$1"
-			ps1pc_end="$2"
-			printf_format="${3:-$printf_format}"
-			git_printf_format="${4:-$git_printf_format}"
+		*)			bash_ps1pc_start="${1:-$ps1pc_start}"
+					bash_ps1pc_end="${2:-$ps1pc_end}"
+					bash_printf_format="${3:-$printf_format}"
+					git_printf_format="${4:-}"
 		;;
 	esac
 	
-	local user="${BASH_PS1_USERNAME:-\\u}"
-	local user_color="${BASH_PS1_USERNAME_COLOR:-$(tput setaf 2)}"
-	local sep="${BASH_PS1_USER_HOST_SEPARATOR:-@}"
-	local sep_color="${BASH_PS1_USER_HOST_SEPARATOR_COLOR:-$user_color}"
-	local host="${BASH_PS1_HOSTNAME:-\\h}"
-	local host_color="${BASH_PS1_HOSTNAME_COLOR:-$user_color}"
-	local pwd=" ${BASH_PS1_PWD:-\\w}"
-	local pwd_color="${BASH_PS1_PWD_COLOR:-$(tput setaf 3)}"
-	local prompt_delimiter="${BASH_PS1_PROMPT:-\n\\\$ }"
-	local prompt_delimiter_color="${BASH_PS1_PROMPT_COLOR:-$(tput sgr0)}"
+	#echo -e "\n"
+	#echo "bash_printf_format = $bash_printf_format$(tput sgr0)"
+	#echo "bash_ps1pc_start   = $bash_ps1pc_start$(tput sgr0)"
+	#echo "bash_ps1pc_end     = $bash_ps1pc_end$(tput sgr0)"
+	#echo -e "\n"
 	
-	if [ ${BASH_PS1_SHOW_USERNAME:-1} != 1 ]; then
-		user=""
-	fi
+	# from git-prompt, local vars in __git_ps1 that are part of the git prompt format string
+	# I just wanted to list them and document them here because I want to use a similar strategy for the bash prompt.
+	#local r=""		# show rebase/merge state (e.g. |REBASE 1/20 )
+	#local b=""		# current branch name
+	#local step=""	# when rebasing or merging, shows what merge/rebase conflict you're currently working on
+	#local total=""  # when rebasing or merging, shows the total number of conflicts in the rebase or merge in progress.
 	
-	if [ ${BASH_PS1_SHOW_HOSTNAME:-1} != 1 ]; then
-		host=""
-	fi
+	#local w=""  # working directory state; shows unstaged (*) and untracked (%) files glyphs
+	#local i=""  # git index state; shows whether the index represents the repo's initial commit (#) or if there are staged files (+)
+	#local s=""  # git stash state; if the repo contains stashes, this variable gets set to $.
+	#local u=""  # shows unstaged (*) files
+	#local c=""  # if you're in a bare git repo, then this displays "BARE:" prior to the branch name; e.g. BARE:master
+	#local p=""  # git upstream info; shows if the repo is ahead or behind of the remote and optionally how many commits ahead/behind.
 	
-	if [ ${BASH_PS1_SHOW_PWD:-1} != 1 ]; then
-		pwd=""
-	fi
+	#local z=" " # separator between git branch info and git repo dirty status info
+	#local f="$w$i$s$u"	# This is the format string for the repository dirty status info
+	#local gitstring="$c$b${f:+$z$f}$r$p"   # the entire git string; if $f is defined, the use $z$f instead.
 	
-	# PROMPT_COMMAND='__git_ps1 "\n$(tput setaf 170)$MSYSTEM $(tput setaf 34)\u@\h\n$(tput setaf 15)PWD: $(tput setaf 111)\w$(tput sgr0)" "\n\\\$ " "\n$(tput setaf 15)GIT:$(tput sgr0) %s$(tput sgr0)"'
+	# Setup the default bashstring variable substitutions.
+	# This should result, by default, with a prompt like:  "user@host ~\n$ "
+	local u="${BASH_PS1_USERNAME:-\\u}"
+	#echo "Username: $u$(tput sgr0)"
+	local z="${BASH_PS1_USER_HOST_SEPARATOR:-@}"
+	#echo "Separator: $z$(tput sgr0)"
+	local h="${BASH_PS1_HOSTNAME:-\\h}"
+	#echo "Hostname: $h$(tput sgr0)"
+	local w="${BASH_PS1_PWD:- \\w}"
+	#echo "PWD: $w$(tput sgr0)"
+	local p="$bash_ps1pc_end${BASH_PS1_PROMPT:-\n\\\$ }"
+	#echo "\$ = $p$(tput sgr0)"
+	
+	#echo -e "\n"
+	
+	# Set the initial bash string, defaulted to "\u@\h \w\n\\\$"
+	# The "format specifiers" have the following interpretation:
 	#
-	# __bash_ps1 {1}:ps1pc_start {2}:ps1pc_end {3}:print_format [{4}:git_print_format]
-	# __bash_ps1 {1}:print_format [{2}:git_print_format]
-	# 
-	# Default Command Prompt examples:
-	# PROMPT_COMMAND='__bash_ps1 "%u%z%h $(tput setaf 170)$MSYSTEM %w%p "'			# <---- Equivalent to the next line:
-	# PROMPT_COMMAND='__bash_ps1 "%u%z%h $(tput setaf 170)$MSYSTEM %w%p " "(%s)"'
+	#   %u :  Username. Will get substituted to \u or the value provided in BASH_PS1_USERNAME
+	#   %z :  Username/hostname separator. Will get substituted to @ or the value provided in BASH_PS1_USER_HOST_SEPARATOR
+	#   %h :  Hostname. Will get substituted to \h or the value provided in BASH_PS1_HOSTNAME
+	#   %w :  Present working directory. Will get substituted to \w or the value provided in BASH_PS1_PWD
+	#   %v :  Version Control Prompt. Place this format specifier where ever in your bash prompt you want 
+	#         your source code version control prompt to be displayed. This specifier will be replaced by,
+	#         executing __git_ps1 from git-prompt.sh (or your local sourced version), for example, when git
+	#		  is your source code control management system.
+	#   %p :  Prompt delimiter. Will get substituted to "\n\\\$ " ($ on a new line) or the value provided in BASH_PS1_PROMPT
 	#
-	# Example of my custom prompt, as shown in the first line of this comment:
-	# PROMPT_COMMAND='__bash_ps1 "\n$(tput setaf 170)$MSYSTEM " "" "%u%z%h\n$(tput setaf 15)PWD: %w%p" "\n$(tput setaf 15)GIT: $(tput sgr0) %s$(tput sgr0)"'
-	#
-	# The goal, then, is to have __bash_ps1 act much like __git_ps1 in order to build up your custom shell prompt.
+	# If you actually want %[uzhwvp] to display in your bash prompt for some reason, then simply escape the % by appending %.
+	# E.g. %%u would allow an actual "%u" to be displayed in your bash prompt.
+	local bashstring="${BASH_PS1_FORMAT_STRING:-%u%z%h%w%v%p}"
 	
-	# This block should be removed before committing to 'master', as it's just a sanity check that the various prompt parts are being
-	# grabbed correctly from the command line arguments to __bash_ps1.
-	if [ "$#" -ge "3" ]; then
-		echo "Three or more arguments."
-		echo "ps1pc_start=$ps1pc_start"
-		echo "ps1pc_end=$ps1pc_end"
-		echo "printf_format=$printf_format"
-		echo "git_printf_format=$git_printf_format"
-	elif [ "$#" -gt "0" ] && [ "$#" -lt "3" ]; then
-		echo "Less than 3 arguments, but at least 1."
-		echo "ps1pc_start=$ps1pc_start"
-		echo "ps1pc_end=$ps1pc_end"
-		echo "printf_format=$printf_format"
-		echo "git_printf_format=$git_printf_format"
-	else
-		echo "Zero arguments"
-		echo "ps1pc_start=$ps1pc_start"
-		echo "ps1pc_end=$ps1pc_end"
-		echo "printf_format=$printf_format"
-		echo "git_printf_format=$git_printf_format"
+	#echo "Current bashstring: $bashstring"
+	
+	# If the user indicates they want to see a colorized prompt (either by declaring the variable
+	# but leaving it unset or setting its value to anything greater than 0), then colorize the prompt string.
+	if [ ${BASH_PS1_SHOW_COLORIZED_PROMPT:-1} -gt 0 ]; then
+		__bash_ps1_colorize_promptstring
 	fi
 	
-	# ANOTHER DEBUG STRING
-	echo "prompt: $ps1pc_start$printf_format$git_printf_format$ps1pc_end"
-	# __bash_ps1 "\$(tput setaf 170)\$MSYSTEM " "" "%u%z%h\\n\$(tput setaf 15)PWD: %w%v%p" "\\n\$(tput setaf 15)GIT: %s"
-	
-	
-	# Need to parse the bash prompt format string (printf_format)
-	echo -e "\nReplacing %u in \$printf_format:"
-	printf_format2="${printf_format/\%u/\$\{user_color\}\$\{user\}}"
-	echo "$printf_format2"
-	
-	echo -e "\nReplacing %z in \$printf_format:"
-	printf_format2="${printf_format2/\%z/\$\{sep_color\}\$\{sep\}}"
-	echo "$printf_format2"
-	
-	echo -e "\nReplacing %h in \$printf_format:"
-	printf_format2="${printf_format2/\%h/\$\{host_color\}\$\{host\}}"
-	echo "$printf_format2"
-	
-	echo -e "\nReplacing %w in \$printf_format:"
-	printf_format2="${printf_format2/\%w/\$\{pwd_color\}\$\{pwd\}}"
-	echo "$printf_format2"
-	
-	if [[ -n "$git_printf_format" ]]; then
-		echo -e "\n\$git_printf_format is defined. Splitting prompt into respective parts for call to __git_ps1."
-		ps1pc_end="\${prompt_delimiter_color}\${prompt_delimiter}"
-		printf_format2="${printf_format2/\%p/}"
-		printf_format2="${printf_format2/\%v/}"
-		echo "'__git_ps1 \"\${ps1pc_start}\" \"\${ps1pc_end}\" \"\${printf_format}\" \"\${git_printf_format}\"'"
-		echo "\$ps1pc_start: ${ps1pc_start}"
-		echo "\$printf_format: ${printf_format2}"
-		echo "\$ps1pc_end: ${ps1pc_end}"
-		echo "__git_ps1: ${ps1pc_start}${printf_format2}${git_printf_format}${ps1pc_end}"
-	else
-		echo -e "\n$git_printf_format not defined. Replacing %v with an empty string and expanding %p."
-		printf_format="${printf_format2/\%p/\$\{prompt_delimiter_color\}\$\{prompt_delimiter\}}"
-		printf_format="${printf_format2/\%v/}"
-		echo "$printf_format2"
+	# If the user decides not to show some components of the default bash prompt,
+	# then set the placeholder variable to the empty string.
+	if [ -z "${BASH_PS1_SHOW_USERNAME}" ]; then
+		u=""
 	fi
 	
-	local bash_ps1_user="${user_color}${user}"
-	local bash_ps1_sep="${sep_color}${sep}"
-	local bash_ps1_host="${host_color}${host}"
-	local bash_ps1_pwd="${pwd_color}${pwd}"
-	local bash_ps1_delimiter="${prompt_delimiter_color}${prompt_delimiter}"
+	if [ -z "${BASH_PS1_SHOW_HOSTNAME}" ]; then
+		h=""
+	fi
 	
-	#printf_format="${printf_format/\%u/${bash_ps1_user}/}"
-	#printf_format="${printf_format/\%z/${bash_ps1_sep}/}"
-	#printf_format="${printf_format/\%h/${bash_ps1_host}/}"
-	#printf_format="${printf_format/\%w/${bash_ps1_pwd}/}"	
-	#printf_format="${printf_format/\%p/${bash_ps1_delimiter}/}"
+	if [ -z "$u" ] && [ -z "$h" ]; then
+		z=""
+	fi
 	
-	# OK, so, at some point, we have to split the printf_format (which is the format string to be used for the bash prompt)
-	# at the point where the git prompt should be displayed (denoted by %v in the bash printf_format format string).
-	# Then, we need to make the necessary substitutions for the various "format parameters" for user, host, etc.
-	# in the bash prompt format string(s). These tokens could appear before or after the git prompt.
-	local after_git_prompt="${printf_format##*\%v}"
-	echo "after_git_prompt = ${after_git_prompt}"
-	before_git_prompt="${printf_format%\%v*}"
-	echo "before_git_prompt = ${before_git_prompt}"
-	echo "printf_format: ${printf_format}"
+	if [ -z "${BASH_PS1_SHOW_PWD}" ]; then
+		w=""
+	fi
 	
-	return $exit;
+	# Now that we know what the user wants to display, (via the BASH_PS1_SHOW_XXXX variables),
+	# substitute the "format specifiers" %u, %h, etc. with $u, $h, etc.
+	# I couldn't use the exact same method as __git_ps1 because the end user has flexility to
+	# display their bash prompt components in any order they choose, hence this more awkward
+	# substitution syntax.
+	#
+	# NOTE: in preparation for calling your vcs prompt formatter, i.e. __git_ps1, don't substitute %v.
+	bashstring="${bashstring/\%u/$u}"
+	#echo $bashstring
+	bashstring="${bashstring/\%z/$z}"
+	#echo $bashstring
+	bashstring="${bashstring/\%h/$h}"
+	#echo $bashstring
+	bashstring="${bashstring/\%w/$w}"
+	#echo $bashstring
+	bashstring="${bashstring/\%p/$p}"
+	#echo $bashstring
+	
+	if __bash_ps1_is_function_defined __git_ps1; then
+		# Split the bashstring on %v and pass the part before %v to the ps1pc_start param
+		# and the part after %v to the ps1pc_end param.
+		local __git_ps1pc_end="${bashstring##*\%v}"
+		local __git_ps1pc_start="${bash_ps1pc_start}${bashstring%\%v*}"
+		
+		#echo "__git_ps1pc_start = $__git_ps1pc_start$(tput sgr0)"
+		#echo "__git_ps1pc_end = $__git_ps1pc_end$(tput sgr0)"
+	
+		# If a custom gitstring has been defined in $git_printf_format, then pass that to __git_ps1, too.
+		#bashstring="__git_ps1 \"$__git_ps1pc_start\" \"$__git_ps1pc_end\" \"$git_printf_format\""
+		#echo "PROMPT_COMMAND = $bashstring"
+		#echo "PS1 = $PS1"
+	fi
+	
+	#echo "String to be passed to PROMPT_COMMAND: $bashstring"
+	
+	__git_ps1 "$__git_ps1pc_start" "$__git_ps1pc_end" "${git_printf_format}"
+	#echo "PS1 = $PS1"
 }
 
-PROMPT_COMMAND='__git_ps1 "$(tput setaf 2)\u@\h $(tput setaf 5)$MSYSTEM $(tput setaf 3)\w$(tput sgr0)" "\n\\\$ "'
+PROMPT_COMMAND='__bash_ps1 "${BASH_PS1_FORMAT_STRING-}" "\n$(tput setaf 15)GIT:$(tput sgr0) %s$(tput sgr0)"'
