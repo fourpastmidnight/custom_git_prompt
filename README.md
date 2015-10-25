@@ -5,7 +5,7 @@
 -->
 These scripts aim to provide the user the ability to more easily and flexibly change their shell (bash and zsh) and git repository prompts.
 > **NOTE**  
-> ZSH is not currently supported, but support is planned to be included.
+> <i><abbr title="Z-Shell">zsh</abbr></i> is not currently supported, but support is planned to be included.
 
 ##Using the Shell Prompt Customization Scripts
 
@@ -42,7 +42,7 @@ Just remember, the more text you display in your prompt, the slower it will be t
   </dd>
   <dd>
       <p><b>EXAMPLE</b></p>
-      <pre>SH_PS1_USERNAME="\n$(tput setaf 170)$MSYSTEM \u"</pre>
+      <pre class="prettyprint"><code class="language-bash hljs">SH_PS1_USERNAME="\n$(tput setaf 170)$MSYSTEM \u"</code></pre>
       <p>On a MINGW64 system (such as <a href="https://git-for-windows.github.io/">Git for Windows</a>, this results in MINGW64 being displayed in a light purple (when using a 256-color terminal) followed by a space, followed by the bash username of the current interactive user.</p>
   </dd>
   <dt>SH_PS1_USER_HOST_SEPARATOR</dt>
@@ -75,19 +75,17 @@ Just remember, the more text you display in your prompt, the slower it will be t
 </dd>
 <dt>SH_PS1_PROMPT</dt>
 <dd>
-  <p>Sets the string to be used for the <i>prompt</i> portion of the prompt string (i.e. the <samp>$</samp> or <samp>#</samp> that is displayed indicating the shell is ready for user input).</p>
-  <p>If not declared, null, or empty, then this variable defaults to <samp>\n\$_</samp> (where <samp>_</samp> is a space) for the shell prompt (i.e. a <samp>$</samp> on a new line followed by a space).</p>
+  <p>Sets the string to be used for the <i>prompt</i> portion of the prompt string (i.e. the '<samp>$</samp>' or '<samp>#</samp>' that is displayed indicating the shell is ready for user input).</p>
+  <p>If not declared, null, or empty, then this variable defaults to '<samp>\n\$&lt;SP&gt;</samp>' for the shell prompt (i.e. a '<samp>$</samp>' on a new line followed by a space).</p>
   <p>Any other text can be used for this variable. But as you may have noticed, something must be displayed. There is no way to not have some sort of prompt be displayed (without altering <samp>sh-prompt.sh</samp> itself).</p>
 </dd>
 <dt>SH_PS1_FORMAT_STRING</dt>
 <dd>
   <p>Defines the tokens that define what portions of the bash prompt should be displayed, and in what order. The <samp>SH_PS1_PROMPT</samp> is always appended to this string.</p>
-  <p>If this variable is undeclared, null, or empty, it defaults to <samp>"%u%z%h%w%v"</samp>. By default, this results in the following prompt:<pre>
-
-		username@host pwd [git_repository_info]
-		$
-</pre></p>
-  <p>If you are not inside a git repository (or <samp>__git_ps1</samp> is not defined), then the <samp>[git_repository_info]</samp> is not displayed.</p>
+  <p>If this variable is undeclared, null, or empty, it defaults to <samp>"%u%z%h%w%v"</samp>. By default, this results in the following prompt:</p>
+  <pre>username@host pwd [git_repository_info]
+$</pre>
+  <p>If you are not inside a git repository (or <code>__git_ps1</code> is not defined), then the <samp>[git_repository_info]</samp> is not displayed.</p>
   <p>The meanings of the format specifier tokens are listed below:</p>
   <table summary="SH_PS1_FORMAT_STRING format token descriptions.">
 	  <thead>
@@ -115,7 +113,7 @@ Just remember, the more text you display in your prompt, the slower it will be t
 	    </tr>
 	    <tr>
 	      <td align="center"><samp>%v</samp></td>
-	      <td>If <samp>__git_ps1</samp> is defined, and you are in a directory that houses a <i>git</i> repository, then this token is indicates where the <i>git</i> repository information will be displayed in your shell prompt.</td>
+	      <td>If <code>__git_ps1</code> is defined, and you are in a directory that houses a <i>git</i> repository, then this token is indicates where the <i>git</i> repository information will be displayed in your shell prompt.</td>
 	    </tr>
 	  </tbody>
 	</table>
@@ -135,33 +133,43 @@ The environment variables listed below can be used to customize the colorization
 
 Just remember, the more text you display in your prompt, the slower it will be to display the prompt. This includes any color information you decide to include in these color format strings.
 
-SH_PS1_DONT_COLORIZE_PROMPT
-:   If set to `1`, the shell prompt will not be colorized (unless any textual format strings discussed in the section above contain any color information themselves).
-:   If this variable is not declared or has any value other than `1` (including null), then the bash prompt will be colorized.
-
-SH_PS1_USERNAME_COLOR
-:   Sets the color the _username_ portion of the shell prompt.
-:   If this variable is not declared and `SH_PS1_DONT_COLORIZE_PROMPT` is not set to `1`, the default color is green, `$(tput setaf 2)`. Otherwise, if this variable is null or empty, it results in `$(tput sgr0)`. Otherwise the value of the variable is used in the shell prompt.
-
-SH_PS1_USER_HOST_SEPARATOR_COLOR
-:   Sets the color for the text which separates the username/hostname portions of the shell prompt.
-:   If this variable is not declared and `SH_PS1_DONT_COLORIZE_PROMPT` is not set to `1`, the default color is green, `$(tput setaf 2`). Otherwise, f this variable is null or empty, it results in `$(tput sgr0)`.  Otherwise the value of the variable is used in the shell prompt.
-
-SH_PS1_HOSTNAME_COLOR
-:   Sets the color for the _hostname_ portion of the shell prompt.
-:   If this variable is not declared and `SH_PS1_DONT_COLORIZE_PROMPT` is not set to `1`, the default color is green, `$(tput setaf 2)`. Otherwise, if this variable is null or empty, it results in `$(tput sgr0)`. Otherwise the value of the variable is used in the shell prompt.
-
-SH_PS1_PWD_COLOR
-:   Sets the color for the _present working directory_ (PWD) portion of the shell prompt.
-:   If this variable is not declared and `SH_PS1_DONT_COLORIZE_PROMPT` is not set to `1`, the default color is dim yellow, `$(tput setaf 3)` (or brown, as I think it was called for 8/16-color mode). Otherwise, if this variable is null or empty, it results in `$(tput sgr0)`. Otherwise the value of the variable is used in the shell prompt.
-
-SH_PROMPT_COLOR
-:   Set the color for the _prompt_ portion of the shell prompt (e.g. typically the `$` or `#` that appears indicating the shell is ready and  awaiting user input).
-:   If this variable is not declared, is null, or empty, then the prompt string's resulting color is `$(tput sgr0)`. Otherwise the value of the variable is used in the shell prompt.
+<dl>
+  <dt>SH_PS1_DONT_COLORIZE_PROMPT</dt>
+  <dd>
+    <p>If set to <samp>1</samp>, the shell prompt will not be colorized (unless any textual format strings discussed in the section above contain any color information themselves).</p>
+    <p>If this variable is not declared or has any value other than <samp>1</samp> (including null), then the bash prompt will be colorized.</p>
+  </dd>
+  <dt>SH_PS1_USERNAME_COLOR</dt>
+  <dd>
+    <p>Sets the color the <i>username</i> portion of the shell prompt.</p>
+    <p>If this variable is not declared and <samp>SH_PS1_DONT_COLORIZE_PROMPT</samp> is not set to <samp>1</samp>, the default color is green, <code>&#x24;(tput setaf 2)</code>. Otherwise, if this variable is null or empty, it results in <code>$(tput sgr0)</code>. Otherwise the value of the variable is used in the shell prompt.</p>
+  </dd>
+  <dt>SH_PS1_USER_HOST_SEPARATOR_COLOR</dt>
+  <dd>
+    <p>Sets the color for the text which separates the <i>username</i>/<i>hostname</i> portions of the shell prompt.</p>
+    <p>If this variable is not declared and <samp>SH_PS1_DONT_COLORIZE_PROMPT</samp> is not set to <samp>1</samp>, the default color is green, <code>&#x24;(tput setaf 2)</code>. Otherwise, if this variable is null or empty, it results in <code>$(tput sgr0)</code>.  Otherwise the value of the variable is used in the shell prompt.</p>
+  </dd>
+  <dt>SH_PS1_HOSTNAME_COLOR</dt>
+  <dd>
+    <p>Sets the color for the <i>hostname</i> portion of the shell prompt.</p>
+    <p>If this variable is not declared and <samp>SH_PS1_DONT_COLORIZE_PROMPT</samp> is not set to <samp>1</samp>, the default color is green, <code>&#x24;(tput setaf 2)</code>. Otherwise, if this variable is null or empty, it results in <code>$(tput sgr0)</code>. Otherwise the value of the variable is used in the shell prompt.</p>
+  </dd>
+  <dt>SH_PS1_PWD_COLOR</dt>
+  <dd>
+    <p>Sets the color for the <i>present working directory</i> (PWD) portion of the shell prompt.</p>
+    <p>If this variable is not declared and <samp>SH_PS1_DONT_COLORIZE_PROMPT</samp> is not set to <samp>1</samp>, the default color is dim yellow, <code>&#x24;(tput setaf 3)</code> (or brown, as I think it was called for 8/16-color mode). Otherwise, if this variable is null or empty, it results in <code>$(tput sgr0)</code>. Otherwise the value of the variable is used in the shell prompt.</p>
+  </dd>
+  <dt>SH_PROMPT_COLOR</dt>
+  <dd>
+    <p>Set the color for the <i>prompt</i> portion of the shell prompt (e.g. typically the '<samp>$</samp'> or '<samp>#</samp>' that appears indicating the shell is ready and  awaiting user input).</p>
+    <p>If this variable is not declared, is null, or empty, then the prompt string's resulting color is <code>$(tput sgr0)</code>. Otherwise the value of the variable is used in the shell prompt.</p>
+  </dd>
+</dl>
 
 > **WARNING**
-> There's nothing stopping you from placing other text in the variables discussed above, but they're intended only to contain only color information for the various pieces of the prompt string. 
-> You can experiment with other values other than purely color information, but you do so at your own risk. This is unsupported behavior.
+> There's nothing stopping you from placing other text in the variables discussed above, but they're intended to contain only color information for the various pieces of the prompt string. 
+> 
+> You can experiment with values other than purely color information, but you do so at your own risk.
 
 ##Customzing Your Git Format String
 `git-prompt.sh` only affects the display of your shell prompt when you are currently in a directory which contains a _git_ repository.
@@ -175,68 +183,115 @@ The following list describes the effects of the standard `git-prompt.sh` environ
 
 Many of the effects of the standard `git-prompt.sh` environment variables can be changed or extended through the use and setting of additional environment variables supported by this extended `git-prompt.sh` script.
 
-GIT_PS1_SHOWDIRTYSTATE
-:   If this environment variable is set to a non-empty value, unstaged and staged changes will be shown next to the current branch name for the git repository.
-:   Unstaged files are denoted with a red `*` and staged changes are denoted with a green `+`. These characters can be replaced using the extended environment variables discussed in the sections that follow. 
-:   You can configure the display of this information per-repository with the `bash.showDirtyState` git repository configuration variable. This git configuration repository variable defaults to `true` once this environment variable is set. To change a particular repository to not show this information after setting this environment variable, run the command:
-
-        git config bash.showDirtyState=false
-inside the git repository.
-
-GIT_PS1_SHOWUNTRACKEDFILES
-:   If this environment variable to a non-empty value, a character representing that there are untracked files in the repository  will be displayed next to the current branch name for the git repository.
-:   Untracked files are denoted with a red `%` sign. This character can be replaced using the extended environment variables discussed in the sections that follow.
-:   You can configure the display of this information per-repository with the `bash.showUntrackedFiles` git configuration variable. This git repository configuration variable defaults to `true` once this environment variable is set. To not show this information for a repository after setting this environment variable, run the command:
-
-        git config bash.showUntrackedFiles=false
-inside the git repository.
-
-GIT_PS1_SHOWSTASHSTATE
-:   If this environment variable is set to a non-empty value, a character representing whether or not any stashes exist in the repository will be displayed next to the current branch name for the git repository.
-:   If there are any stashes present in the current repository, this will be denoted with a blue `$`. This character can be replaced using the extended environment variables discussed in the sections that follow.
-
-GIT_PS1_SHOWUPSTREAM
-:   If you would like to see the difference between `HEAD` and its upstream, set this environment variable to `auto`.  A `<` indicates you are behind, `>` indicates you are ahead, `<>` indicates you have diverged, and `=` indicates that there is no difference between your copy of the branch and the upstream branch. You can further control behaviour of displaying upstream branch information by setting this environment variable to a space-separated list of values shown in the table below:
-:   | Value | Description |
-|:--------|:---------------------------------------------------------------------------------------------------------|
-| verbose | Shows the number of commits your copy of the branch is ahead/behind (+/-) of the upstream branch |
-| name    | If verbose is specified, then also show the upstream abbreviation name                         |
-| legacy  | Don't use the '--count' option available in recent versions of `git-rev-list`                            |
-| git     | Always compare `HEAD` to `@{upstream}` |
-| svn     | Always compare `HEAD` to your SVN upstream |
-
-
-:   By default, `__git_ps1` will compare `HEAD` to your SVN upstream if it can find one, or `@{upstream}` otherwise.  Once you have set this environment variable, you can override it on a per-repository basis by setting the git repository configuration variable `bash.showUpstream`. To change how a particular repository shows this information after setting this environment variable, run the command:
-
-        git config bash.showUntrackedFiles="<space-separated list of values>"
-inside the git repository.
-
-GIT_PS1_STATESEPARATOR
-:   You can change the separator between the branch name and the above state symbols by setting this environment variable. The default separator is `<SP>` (a space character).
-
-GIT_PS1_DESCRIBE_STYLE
-:   If you would like to see more information about the identity of commits checked out as a detached `HEAD`, set this environment variable to one of these values:
-:   | Value      | Description                                           |
-|:-----------|:------------------------------------------------------|
-| `contains` | Displays a value relative to a newer annotated tag as the current branch name, for example, `(v1.6.3.2~35)` |
-| `branch`   | Displays a value relative to newer tag or branch as the current branch name, for example, `(master~4)`    |
-| `describe` | Displays a value relative to an older annotated tag as the current branch name, for example `(v1.6.3.1-13-gdd42c2f)` |
-| default    | Displays the exactly matching tag as the current branch name. |
-
-GIT_PS1_SHOWCOLORHINTS
-:   If this environment variable is set to a non-empty value, `__git_ps1` displays colored repository branch state information. The colors are based on the colored output from the `git status -sb` command.
-:   Colored output of dirty state information is only available when using the output from `__git_ps1` for setting `PROMPT_COMMAND` (in _bash_) or when using `precmd` (in _zsh_).
-:   > **NOTE**
-> ZSH is not supported at this time. Hopefully support will be added for this shell in the near future.
-
-GIT_PS1_HIDE_IF_PWD_IGNORED
-:   If you would like `__git_ps1` to do nothing in the case when the current directory is set up to be ignored by _git_ (via a repository `.gitignore` or global ignore file), then set this environment variable value to a non-empty value. 
-: You can override the effects of this environment variable on a per-repository basis by setting the git repository configuration variable`bash.hideIfPwdIgnored` to `false` by running the command
-
-        git config bash.hideIfPwdIgnored=false
-from within the repository.
+<dl>
+  <dt>GIT_PS1_SHOWDIRTYSTATE</dt>
+  <dd>
+    <p>If this environment variable is set to a non-empty value, unstaged and staged changes will be shown next to the current branch name for the <i>git</i> repository.</p>
+    <p>Unstaged files are denoted with a red '<samp>*</samp>' and staged changes are denoted with a green '<samp>+</samp>'. These characters can be replaced using the extended environment variables discussed in the sections that follow.</p>
+    <p>You can configure the display of this information per repository with the <samp>bash.showDirtyState</samp> <i>git</i> repository configuration variable. This <i>git</i> configuration repository variable defaults to <samp>true</samp> once this environment variable is set. To change a repository to not show this information after this environment variable has been set, run the following command inside the <i>git</i> repository:</p>
+    <pre class="prettyprint"><code class="language-bash hljs">$ git config bash.showDirtyState=false</code></pre>
+  </dd>
+  <dt>GIT_PS1_SHOWUNTRACKEDFILES</dt>
+  <dd>
+    <p>If this environment variable to a non-empty value, a character representing that there are untracked files in the repository  will be displayed next to the current branch name for the <i>git</i> repository.</p>
+    <p>Untracked files are denoted with a red '<samp>%</samp>' sign. This character can be replaced using the extended environment variables discussed in the sections that follow.</p>
+    <p>You can configure the display of this information per repository with the <samp>bash.showUntrackedFiles</samp> <i>git</i> configuration variable. This <i>git</i> repository configuration variable defaults to <samp>true</samp> once this environment variable is set. To change a repository to not show this information after setting this environment variable, run the following command inside the <i>git</i> repository:</p>
+    <pre class="prettyprint"><code class="language-bash hljs">$ git config bash.showUntrackedFiles=false</code></pre>
+  </dd>
+  <dt>GIT_PS1_SHOWSTASHSTATE</dt>
+  <dd>
+    <p>If this environment variable is set to a non-empty value, a character representing whether or not any stashes exist in the repository will be displayed next to the current branch name for the <i>git</i> repository.</p>
+    <p>If there are any stashes present in the current repository, this will be denoted with a blue '<samp>$</samp>'. This character can be replaced using the extended environment variables discussed in the sections that follow.</p>
+  </dd>
+  <dt>GIT_PS1_SHOWUPSTREAM</dt>
+  <dd>
+    <p>If you would like to see the difference between <samp>HEAD</samp> and its upstream, set this environment variable to <code>auto</code>.  A '<samp>&lt;</samp>' indicates you are behind, '<samp>&gt;</samp'> indicates you are ahead, '<samp>&lt;&gt;</samp>' indicates you have diverged, and '<samp>=</samp>' indicates that there is no difference between your copy of the branch and the upstream branch. You can further control behaviour of displaying upstream branch information by setting this environment variable to a space-separated list of values shown in the table below:</p>
+    <table summary="Valid values and their description for GIT_PS1_SHOWUPSTREAM">
+      <thead>
+        <tr>
+          <th scope="col">Value</th>
+          <th scope="col">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><samp>verbose</samp></td>
+          <td>Shows the number of commits your copy of the branch is ahead/behind (+/-) of the upstream branch.</td>
+        </tr>
+        <tr>
+          <td><samp>name</samp></td>
+          <td>If verbose is specified, then also showthe upstream abbreviation name.</td>
+        </tr>
+        <tr>
+          <td><samp>legacy</samp></td>
+          <td>Don't use the <code>--count</code> option available in recent versions of <code>git-rev-list</code></td>
+        </tr>
+        <tr>
+          <td><samp>git</samp></td>
+          <td>Always compare <samp>HEAD</samp> to <samp>@{upstream}</samp></td>
+        </tr>
+        <tr>
+          <td><samp>svn</samp></td>
+          <td>Always compare <samp>HEAD</samp> to your SVN upstream</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>By default, <code>__git_ps1</code> will compare <samp>HEAD</samp> to your SVN upstream if it can find one, or <samp>@{upstream}</samp> otherwise.  Once you have set this environment variable, you can override it on a per repository basis by setting the <i>git</i> repository configuration variable <samp>bash.showUpstream</samp>. To change how a particular repository shows this information after setting this environment variable, run the following command inside the repository:</p>
+    <pre class="prettify"><code class="language-bash hljs"># Running this command sets bash.showUntrackedFiles to its default value.<br /># Of course, you can use any of the values from the table above.<br /><br />$ git config bash.showUntrackedFiles="git"</code></pre>
+  </dd>
+  <dt>GIT_PS1_STATESEPARATOR</dt>
+  <dd>
+    <p>You can change the separator between the branch name and the above state symbols by setting this environment variable. The default separator is <samp>&lt;SP&gt;</samp> (a space character).</p>
+  </dd>
+  <dt>GIT_PS1_DESCRIBE_STYLE</dt>
+  <dd>
+    <p>If you would like to see more information about the identity of commits checked out as a detached <samp>HEAD</samp>, set this environment variable to one of these values:</p>
+    <table summary="Valid values for the GIT_PS1_DESCRIBE_STYLE environment variable.">
+      <thead>
+        <tr>
+          <th scope="col">Value</th>
+          <th scope="col">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><samp>contains</samp></td>
+          <td>Displays a value relative to a newer annotated tag as the current branch name. For example: <samp>(v1.6.3.2~35)</samp>.</td>
+        </tr>
+        <tr>
+          <td><samp>branch</samp></td>
+          <td>Displays a value relative to a newer tag or branch as the current branch name. For example: <samp>(master~4)</samp></td>
+        </tr>
+        <tr>
+          <td><samp>describe</samp></td>
+          <td>Displays a value relative to an older annotated tag as the current branch name. For example: <samp>(v1.6.3.1-13-gdd42c2f)</samp></td>
+        </tr>
+        <tr>
+          <td><samp>default</samp></td>
+          <td>displays the exactly matching tag (or shortened commit SHA) as the current branch name.</td>
+        </tr>
+      </tbody>
+    </table>
+  </dd>
+  <dt>GIT_PS1_SHOWCOLORHINTS</dt>
+  <dd>
+    <p>If this environment variable is set to a non-empty value, <code>__git_ps1</code> displays colored repository branch state information. The colors are based on the colored output from the <code>git status -sb</code> command.</p>
+    <p>Colored output of dirty state information is only available when using the output from <code>__git_ps1</code> for setting <code>PROMPT_COMMAND</code> (in <i>bash</i>) or when using <code>precmd</code> (in <i>zsh</i>).</p>
+    <blockquote>
+      <p><b>NOTE</b></p>
+      <p><i><abbr title="Z-Shell">zsh</abbr></i> is not supported at this time. Hopefully support will be added for this shell in the near future.</p>
+    </blockquote>
+  </dd>
+  <dt>GIT_PS1_HIDE_IF_PWD_IGNORED</dt>
+  <dd>
+    <p>If you would like <code>__git_ps1</code> to do nothing in the case when the current directory is set up to be ignored by _git_ (via a repository <samp>.gitignore</samp> or global ignore file), then set this environment variable value to a non-empty value.</p>
+    <p>You can override the effects of this environment variable on a per repository basis by setting the <i>git</i> repository configuration variable <samp>bash.hideIfPwdIgnored</samp> to <code>false</code> by running the following command from within the repository:</p>
+    <pre class="prettyprint"><code class="language-bash hljs">$ git config bash.hideIfPwdIgnored=false</code></pre>
+  </dd>
+</dl>
 
 ###New `git-prompt.sh` Environment Variables
+
 The following list and description of environment variables have been added to this extended version of the `git-prompt.sh` script. The default values of all of these variables results in this extended `git-prompt.sh` script working in exactly the same manner as the standard `git-prompt.sh` script provided with distributions of _git_. These variables can be broken down into two main categories:
 
 1. Information display format strings
@@ -244,79 +299,199 @@ The following list and description of environment variables have been added to t
 
 ####Display Format Strings
 The following list describes the available format string environment variables that will allow you to customize how git repository information is displayed via `__git_ps1`.
-
-GIT_PS1_SHOWUPSTREAM_STYLE
-:   This environment variable can be set to one of the following values (the **Verbose** column indicates whether or not `GIT_PS1_SHOWUPSTREAM` contains `verbose` as one of its values):
-:  | Value       | Verbose | Behind                       | Ahead             | Diverged            | Equal |
-|:------------|:--------:|:----------------------------:|:-----------------:|:-------------------:|:-----:|
-| default        | no       | <samp>&lt;</samp>            | <samp>&gt;</samp> | <samp>&lt;&gt;</samp> | <samp>=</samp> |
-| default        | yes      | <samp>u-{count}</samp> | <samp>u+{count}</samp> | <samp>u+{count}-{count}</samp> | <samp>u=</samp>   |
-| arrow       | no       | <samp>&#x2193;</samp>        | <samp>&#x2191;</samp>| <samp>&#x2193;&#x2191;</samp>      | <samp>&#x2261;</samp> |
-| arrow       | yes      | <samp>&#x2193;{count}</samp> | <samp>{count}&#x2191;</samp> | <samp>{count}&#x2193;&#x2191;{count}</samp> | <samp>&#x2261;</samp> |
-| rlarrowhead | no | <samp>&#x02C2;</samp> | <samp>&#x02C3;</samp> | <samp>&#x02C2;&#x02C3;</samp> | <samp>&#x2261;</samp> |
-| rlarrowhead | yes | <samp>&#x02C2;{count}</samp> | <samp>{count}&#x02C3;</samp> | <samp>{count}&#x02C2;&#x02C3;{count}</samp> | <samp>&#x2261;</samp> |
-| udarrowhead | no | <samp>&#x02C5;</samp> | <samp>&#x02C4;</samp> | <samp>&#x02C5;&#x02C4;</samp> | <samp>&#x2261;</samp> |
-| udarrowhead | yes | <samp>&#x02C5;{count}</samp> | <samp>{count}&#x02C4;</samp> | <samp>{count}&#x02C5;&#x02C4;{count}</samp> | <samp>&#x2261;</samp> |
-| rltri | no | <samp>&#x25BC;</samp> | <samp>&#x25B2;</samp> | <samp>&#x25BC;&#x25B2;</samp> | <samp>&#x2261;</samp> |
-| rltri | yes | <samp>{count}&#x25BC;</samp> | <samp>&#x25B2;{count}</samp> | <samp>{count}&#x25BC;&#x25B2;{count}</samp> | <samp>&#x2261;</samp> |
-| udtri | no  | <samp>&#x25C4;</samp> | <samp>&#x25BA;</samp> | <samp>&#x25C4;&#x25BA;</samp> | <samp>&#x2261;</samp> |
-| udtri | yes | <samp>{count}&#x25C4;</samp> | <samp>&#x25BA;{count}</samp> | <samp>{count}&#x25C4;&#x25BA;{count}</samp> | <samp>&#x2261;</samp> |
-| custom | no | <samp>{_user defined_}</samp> | <samp>{_user defined_}</samp> | <samp>{behind_glyph}{ahead_glyph}</samp> | <samp>_user defined_</samp> |
-| custom | yes | <samp>{count}{_user defined_}</samp> | <samp>{_user_defined_}{count}</samp> | <samp>{count}{behind_glyph}{ahead_glyph}{count}</samp> | <samp>{_user defined_}</samp> |
-
-: If this environment variable is not declared, null, empty, or not one of the values defined in the table above, then the value defaults to `default` in the above table.
-: > **NOTE**
-> In order to use any of the values except <samp>none</samp> or <samp>custom</samp>, you must use a terminal which supports UTF-8 character enocding. Likewise, if you use Unicode characters for any of the four custom glyph environment variables, your terminal must support UTF-8 character encoding.
-
-GIT_PS1_SHOWUPSTREAM_CUSTOM_AHEAD
-GIT_PS1_SHOWUPSTREAM_CUSTOM_BEHIND
-GIT_PS1_SHOWUPSTREAM_CUSTOM_DIVERGED
-GIT_PS1_SHOWUPSTREAM_CUSTOM_UPTODATE
-:   These  four variables allow you to set the marker to be displayed for each of the four states of a local repository branch as compared to its remote upstream branch.
-:   > **NOTE**  
-> There's nothing stopping you from including additional text or other information in any one of these variables. However, their main intent was to display a single glyph-like character. Using anything more than a single character to display information about the status of a branch compared to its upstream counterpart may cause unpredictable behavior and is unsupported.
-
-GIT_PS1_SHOWUPSTREAM_SEPARATOR
-:   If this variable is declared and set to a non-null, non-empty value, the value of this environment variable is used between the ahead/behind information displayed when `GIT_PS1_SHOWUPSTREAM` is set to a non-empty value. For example, if `GIT_PS1_SHOWUPSTREAM_SEPARATOR=|`, a diverged branch would display as `{count}<|>{count}`.
-
-GIT_PS1_INITIALCOMMIT
-:   When `GIT_PS1_SHOWDIRTYSTATE` is set to a non-empty value, this environment variable determines the text that is displayed for a branch which has no commits (i.e. the repository is new). The default text that is displayed if this variable is not declared is `#`.
-
-GIT_PS1_STAGEDCHANGES
-:   When `GIT_PS1_SHOWDIRTYSTATE` is set to a non-empty value, this environment variable determines the text that is displayed for a branch when that branch has staged changes that need to be committed. The default text that is displayed when there are staged changes in the local repository is `+`.
-
-GIT_PS1_UNSTAGEDCHANGES
-:   When `GIT_PS1_SHOWDIRTYSTATE` is set to a non-empty value, this environment variable determines the text that is displayed for a branch when that branch has unstaged changes that need to be staged. The default text that is displayed when there are unstaged changes in the local repository is `*`.
-
-GIT_PS1_UNTRACKEDFILES
-:   When `GIT_PS1_SHOWUNTRACKEDFILES` is set to a non-empty value, this environment variable determines the text that is displayed for a branch when that branch has untracked files. The default text that is displayed when untracked files exist in the local repository is `%`.
-
-GIT_PS1_STASHSTATE
-:   When `GIT_PS1_SHOWSTASHSTATE` is set to a non-empty value, this environment variable determines the text that is displayed for a repository when that repository has changes which have been stashed. The default text that is displayed when a repository has stashed changes is `$`.
+<dl>
+  <dt>GIT_PS1_SHOWUPSTREAM_STYLE</dt>
+  <dd>
+    <p>This environment variable can be set to one of the values listed in the following table. In the table below, the <b>Verbose</b> column indicates whether or not <samp>GIT_PS1_SHOWUPSTREAM</samp> contains <code>verbose</code> as one of its values. <samp>{ac}</samp> means <i>ahead count</i>, <samp>{bc}</samp> means <i>behind count</i>, and <samp>{b-ud}</samp> means <i>behind user defined</i> and <samp>{a-ud}</samp> means <i>ahead user defined</i>.</p>
+    <table summary="Valid GIT_PS1_SHOWUPSTREAM_STYLE values and the resulting output.">
+      <thead>
+        <tr>
+          <th align="center" scope="col">Value</th>
+          <th align="center" cope="col">Verbose</th>
+          <th align="center" scope="col">Behind</th>
+          <th align="center" scope="col">Ahead</th>
+          <th align="center" scope="col">Diverged</th>
+          <th align="center" scope="col">Up-to-Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><samp>default</samp></td>
+          <td align="center">No</td>
+          <td align="center"><samp>&lt;</samp></td>
+          <td align="center"><samp>&gt;</samp></td>
+          <td align="center"><samp>&lt;&gt;</samp></td>
+          <td align="center"><samp>=</samp></td>
+        </tr>
+        <tr>
+          <td><samp>default</samp></td>
+          <td align="center">Yes</td>
+          <td align="center"><samp>u-{bc}</samp></td>
+          <td align="center"><samp>u+{ac}</samp></td>
+          <td align="center"><samp>u+{ac}-{bc}</samp></td>
+          <td align="center"><samp>u=</samp></td>
+        </tr>
+        <tr>
+	      <td><samp>arrow</samp></td>
+	      <td align="center">No</td>
+	      <td align="center"><samp>&#x2193;</samp></td>
+	      <td align="center"><samp>&#x2191;</samp></td>
+	      <td align="center"><samp>&#x2193;&#x2191;</samp></td>
+	      <td align="center"><samp>&#x2261;</samp></td>
+	    </tr>
+	    <tr>
+	      <td><samp>arrow</samp></td>
+	      <td align="center">Yes</td>
+	      <td align="center"><samp>{bc}&#x2193;</samp></td>
+	      <td align="center"><samp>&#x2191;{ac}</samp></td>
+	      <td align="center"><samp>{bc}&#x2193;&#x2191;{ac}</samp></td>
+	      <td align="center"><samp>&#x2261;</samp></td>
+	    </tr>
+	    <tr>
+		  <td><samp>rlarrowhead</samp>
+		  <td align="center">No</td>
+		  <td align="center"><samp>&#x02C2;</samp></td>
+		  <td align="center"><samp>&#x02C3;</samp></td>
+		  <td align="center"><samp>&#x02C2;&#x02C3;</samp></td>
+		  <td align="center"><samp>&#x2261;</samp></td>
+		</tr>
+		<tr>
+		  <td><samp>rlarrowhead</samp>
+		  <td align="center">Yes</td>
+		  <td align="center"><samp>{bc}&#x02C2;</samp></td>
+		  <td align="center"><samp>&#x02C3;{ac}</samp></td>
+		  <td align="center"><samp>{bc}&#x02C2;&#x02C3;{ac}</samp></td>
+		  <td align="center"><samp>&#x2261;</samp></td>
+		</tr>
+		<tr>
+		  <td><samp>udarrowhead</samp>
+		  <td align="center">No</td>
+		  <td align="center"><samp>&#x02C5;</samp></td>
+		  <td align="center"><samp>&#x02C4;</samp></td>
+		  <td align="center"><samp>&#x02C5;&#x02C4;</samp></td>
+		  <td align="center"><samp>&#x2261;</samp></td>
+		</tr>
+		<tr>
+		  <td><samp>udarrowhead</samp>
+		  <td align="center">Yes</td>
+		  <td align="center"><samp>{bc}&#x02C5;</samp></td>
+		  <td align="center"><samp>&#x02C4;{ac}</samp></td>
+		  <td align="center"><samp>{bc}&#x02C5;&#x02C4;{ac}</samp></td>
+		  <td align="center"><samp>&#x2261;</samp></td>
+		</tr>
+		<tr>
+		  <td><samp>rltri</samp></td>
+		  <td align="center">No</td>
+		  <td align="center"><samp>&#x25C4;</samp></td>
+		  <td align="center"><samp>&#x25BA;</samp></td>
+		  <td align="center"><samp>&#x25C4;&#x25BA;</samp></td>
+		  <td align="center"><samp>&#x2261;</samp></td>
+		</tr>
+		<tr>
+		  <td><samp>rltri</samp></td>
+		  <td align="center">Yes</td>
+		  <td align="center"><samp>{bc}&#x25C4;</samp></td>
+		  <td align="center"><samp>&#x25BA;{ac}</samp></td>
+		  <td align="center"><samp>{bc}&#x25C4;&#x25BA;{ac}</samp></td>
+		  <td align="center"><samp>&#x2261;</samp></td>
+		</tr>
+		<tr>
+		  <td><samp>udtri</samp></td>
+		  <td align="center">No</td>
+		  <td align="center"><samp>&#x25BC;</samp></td>
+		  <td align="center"><samp>&#x25B2;</samp></td>
+		  <td align="center"><samp>&#x25BC;&#x25B2;</samp></td>
+		  <td align="center"><samp>&#x2261;</samp></td>
+		</tr>
+		<tr>
+		  <td><samp>udtri</samp></td>
+		  <td align="center">Yes</td>
+		  <td align="center"><samp>{bc}&#x25BC;</samp></td>
+		  <td align="center"><samp>&#x25B2;{ac}</samp></td>
+		  <td align="center"><samp>{bc}&#x25BC;&#x25B2;{ac}</samp></td>
+		  <td align="center"><samp>&#x2261;</samp></td>
+		</tr>
+		<tr>
+		  <td><samp>custom</samp>
+		  <td align="center">No</td>
+		  <td align="center"><samp>{b-ud}</samp></td>
+		  <td align="center"><samp>{a-ud}</samp></td>
+		  <td align="center"><samp>{b-ud}{a-ud}</samp></td>
+		  <td align="center"><samp>{ud}</samp></td>
+		</tr>
+		<tr>
+		  <td><samp>custom</samp>
+		  <td align="center">Yes</td>
+		  <td align="center"><samp>{bc}{b-ud}</samp></td>
+		  <td align="center"><samp>{a-ud}{ac}</samp></td>
+		  <td align="center"><samp>{bc}{b-ud}{a-ud}{ac}</samp></td>
+		  <td align="center"><samp>{ud}</samp></td>
+		</tr>
+	  </tbody>
+	</table>
+	<p>If this environment variable is not declared or is null or empty or not one of the values defined in the table above, then the value defaults to <code>default</code> in the above table.</p>
+	<blockquote>
+	  <p><b>NOTE</b></p>
+	  <p>In order to use any of the values except <code>default</code> or <code>custom</code>, you must use a terminal which supports UTF-8 character encoding. Likewise, if you use Unicode characters for any of the four custom glyph environment variables, your terminal must support UTF-8 character encoding.</p>
+	</blockquote>
+  </dd>
+  <dt>GIT_PS1_SHOWUPSTREAM_CUSTOM_AHEAD</dt>
+  <dt>GIT_PS1_SHOWUPSTREAM_CUSTOM_BEHIND</dt>
+  <dt>GIT_PS1_SHOWUPSTREAM_CUSTOM_DIVERGED</dt>
+  <dt>GIT_PS1_SHOWUPSTREAM_CUSTOM_UPTODATE</dt>
+  <dd>
+    <p>These  four variables allow you to set the marker to be displayed for each of the four states of a local repository branch as compared to its remote upstream branch.</p>
+    <blockquote>
+      <p><b>NOTE</b></p>
+      <p>There's nothing stopping you from including additional text or other information in any one of these variables. However, their main intent was to display a single glyph-like character. Using anything more than a single character to display information about the status of a branch compared to its upstream counterpart may cause unpredictable behavior and is unsupported.</p>
+    </blockquote>
+  </dd>
+  <dt>GIT_PS1_SHOWUPSTREAM_SEPARATOR</dt>
+  <dd>
+    <p>If this variable is declared and set to a non-null, non-empty value, the value of this environment variable is used between the ahead/behind information displayed when <samp>GIT_PS1_SHOWUPSTREAM</samp> is set to a non-empty value. For example, if <code>GIT_PS1_SHOWUPSTREAM_SEPARATOR="|"</code>, a diverged branch would display as <samp>{bc}<|>{ac}</samp>.
+    </p>
+  </dd>
+  <dt>GIT_PS1_INITIALCOMMIT</dt>
+  <dd>
+    <p>When <samp>GIT_PS1_SHOWDIRTYSTATE</samp> is set to a non-empty value, this environment variable determines the text that is displayed for a branch which has no commits (i.e. the repository is new). The default text that is displayed if this variable is not declared is '<samp>#</samp>'.</p>
+  </dd>
+  <dt>GIT_PS1_STAGEDCHANGES</dt>
+  <dd>
+    <p>When <samp>GIT_PS1_SHOWDIRTYSTATE</samp> is set to a non-empty value, this environment variable determines the text that is displayed for a branch when that branch has staged changes that need to be committed. The default text that is displayed when there are staged changes in the local repository is '<samp>+</samp>'.</p>
+  </dd>
+  <dt>GIT_PS1_UNSTAGEDCHANGES</dt>
+  <dd>
+    <p>When <samp>GIT_PS1_SHOWDIRTYSTATE</samp> is set to a non-empty value, this environment variable determines the text that is displayed for a branch when that branch has unstaged changes that need to be staged. The default text that is displayed when there are unstaged changes in the local repository is '<samp>*</samp>'.</p>
+  </dd>
+  <dt>GIT_PS1_UNTRACKEDFILES</dt>
+  <dd>
+    <p>When <samp>GIT_PS1_SHOWUNTRACKEDFILES</samp> is set to a non-empty value, this environment variable determines the text that is displayed for a branch when that branch has untracked files. The default text that is displayed when untracked files exist in the local repository is '<samp>%</samp>'.</p>
+  </dd>
+  <dt>GIT_PS1_STASHSTATE</dt>
+  <dd>
+    <p>When <samp>GIT_PS1_SHOWSTASHSTATE</samp> is set to a non-empty value, this environment variable determines the text that is displayed for a repository when that repository has changes which have been stashed. The default text that is displayed when a repository has stashed changes is '<samp>$</samp>'.</p>
+  </dd>
+</dl>
 
 ####Color Format Strings
 The following list describes the available color format string environment variables that will allow you to customize how git repository information is colored when displayed via `__git_ps1` as extended in this version of `git-prompt.sh`.
 
-GIT_PS1_DETACHEDHEAD_COLOR
-:   When `GIT_PS1_SHOWCOLORHINTS` is set to a non-empty value, a detached head will be displayed in the color specified by this environment variable. If this environment variable is undeclared, the default value of `$(tput setaf 1)` (red) is used.
-
-GIT_PS1_OKBRANCH_COLOR
-:   When `GIT_PS1_SHOWCOLORHINTS` is set to a non-empty value, a branch which is set to track a valid remote branch will be displayed in the color specified by this environment variable. If this environment variable is undeclared, the default value of `$(tput setaf 2)` (green) will be used.
-
-GIT_PS1_INITIALCOMMIT_COLOR
-:   When `GIT_PS1_SHOWDIRTYSTATE` and `GIT_PS1_SHOWCOLORHINTS` are set to a non-empty value, a repository which has no commits (i.e. a new repository) will display the value of `GIT_PS1_INITIALCOMMIT` next to the branch name using the color specified by this environment variable. If this environment variable is undeclared, the default value of `$(tput setaf 2)` (green) is used.
-
-GIT_PS1_STAGEDCHANGES_COLOR
-:   When `GIT_PS1_SHOWDIRTYSTATE` and `GIT_PS1_SHOWCOLORHINTS` are set to a non-empty value, a repository which has staged changes will display the value of `GIT_PS1_STAGEDCHANGES` next to the branch name using the color specified by this environment variable. If this environment variable is undeclared, the default value of `$(tput setaf 2)` (green) is used.
-
-GIT_PS1_UNSTAGEDCHANGES_COLOR
-:   When `GIT_PS1_SHOWDIRTYSTATE` and `GIT_PS1_SHOWCOLORHINTS` are set to a non-empty value, a repository which has unstaged changes will display the value of `GIT_PS1_UNSTAGEDCHANGES` next to the branch name using the color specified by this environment variable. If this environment variable is undeclared, the default value of `$(tput setaf 1)` (red) is used.
-
-GIT_PS1_UNTRACKEDFILES_COLOR
-:   When `GIT_PS1_SHOWUNTRACKEDFILES` and `GIT_PS1_SHOWCOLORHINTS` are set to a non-empty value, a repository which has untracked files will display the value of `GIT_PS1_UNTRACKEDFILES` next to the branch name using the color specified by this environment variable. If this environment variable is undeclared, the default value of `$(tput setaf 1)` (red) is used.
-
-GIT_PS1_STASHSTATE_COLOR
-:   When `GIT_PS1_SHOWSTASHSTATE` and `GIT_PS1_SHOWCOLORHINTS` are set to a non-empty value, a repository which has stashed changes will display the value of `GIT_PS1_STASHSTATE` next to the branch name using the color specified by this environment variable. If this environment variable is undeclared, the default value of `$(tput setaf 4)` (blue) is used.
+<dl>
+  <dt>GIT_PS1_DETACHEDHEAD_COLOR</dt>
+  <dd>When <samp>GIT_PS1_SHOWCOLORHINTS</samp> is set to a non-empty value, a detached head will be displayed in the color specified by this environment variable. If this environment variable is undeclared, the default value of <code>$(tput setaf 1)</code> (red) is used.</dd>
+  <dt>GIT_PS1_OKBRANCH_COLOR</dt>
+  <dd>When <samp>GIT_PS1_SHOWCOLORHINTS</samp> is set to a non-empty value, a branch which is set to track a valid remote branch will be displayed in the color specified by this environment variable. If this environment variable is undeclared, the default value of <code>$(tput setaf 2)</code> (green) will be used.</dd>
+  <dt>GIT_PS1_INITIALCOMMIT_COLOR</dt>
+  <dd>When <samp>GIT_PS1_SHOWDIRTYSTATE</samp> and <samp>GIT_PS1_SHOWCOLORHINTS</samp> are set to a non-empty value, a repository which has no commits (i.e. a new repository) will display the value of <samp>GIT_PS1_INITIALCOMMIT</samp> next to the branch name using the color specified by this environment variable. If this environment variable is undeclared, the default value of <code>$(tput setaf 2)</code> (green) is used.</dd>
+  <dt>GIT_PS1_STAGEDCHANGES_COLOR</dt>
+  <dd>When <samp>GIT_PS1_SHOWDIRTYSTATE</samp> and <samp>GIT_PS1_SHOWCOLORHINTS</samp> are set to a non-empty value, a repository which has staged changes will display the value of <samp>GIT_PS1_STAGEDCHANGES</samp> next to the branch name using the color specified by this environment variable. If this environment variable is undeclared, the default value of <code>$(tput setaf 2)</code> (green) is used.</dd>
+  <dt>GIT_PS1_UNSTAGEDCHANGES_COLOR</dt>
+  <dd>When <samp>GIT_PS1_SHOWDIRTYSTATE</samp> and <samp>GIT_PS1_SHOWCOLORHINTS</samp> are set to a non-empty value, a repository which has unstaged changes will display the value of <samp>GIT_PS1_UNSTAGEDCHANGES</samp> next to the branch name using the color specified by this environment variable. If this environment variable is undeclared, the default value of <code>$(tput setaf 1)</code> (red) is used.</dd>
+  <dt>GIT_PS1_UNTRACKEDFILES_COLOR</dt>
+  <dd>When <samp>GIT_PS1_SHOWUNTRACKEDFILES</samp> and <samp>GIT_PS1_SHOWCOLORHINTS</samp> are set to a non-empty value, a repository which has untracked files will display the value of <samp>GIT_PS1_UNTRACKEDFILES</samp> next to the branch name using the color specified by this environment variable. If this environment variable is undeclared, the default value of <code>$(tput setaf 1)</code> (red) is used.</dd>
+  <dt>GIT_PS1_STASHSTATE_COLOR</dt>
+  <dd>When <samp>GIT_PS1_SHOWSTASHSTATE</samp> and <samp>GIT_PS1_SHOWCOLORHINTS</samp> are set to a non-empty value, a repository which has stashed changes will display the value of <samp>GIT_PS1_STASHSTATE</samp> next to the branch name using the color specified by this environment variable. If this environment variable is undeclared, the default value of <code>$(tput setaf 4)</code> (blue) is used.</dd>
+</dl>
 
 ##Examples of Shell and/or Git Prompt Customization
 In the following sections, several examples of variable values will be shown and the resulting shell prompt output will be demonstrated.
