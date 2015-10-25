@@ -379,11 +379,15 @@ function __sh_ps1()
 	
 	# Process function arguments.
 	case "$#" in
-		3)		sh_printf_format="${3+\033]2;$3\a}${1:-$sh_printf_format}"
+		3)		sh_printf_format="${1:-$sh_printf_format}"
+				sh_printf_format="${3+\033]2;$3\a}${sh_printf_format// /}" # TODO: this only strips spaces--need to strip all white space
+				# Better yet, create a map of integers to format tokens indicating the relative ordering of format tokens to one another.
+				# This might allow us to not perform so much string manipulation--merely concatenating all the required values once we
+				# have figured out what they all are. Hopefully, this change will improve the speed of this script.
 				git_printf_format="${2:-}"
 			;;
-		*)
-				sh_printf_format="${1:-$sh_printf_format}"
+		*)		sh_printf_format="${1:-$sh_printf_format}"
+				sh_printf_format="${sh_printf_format// /}"
 				git_printf_format="${2:-}"
 				sh_ps1pc_start="${3:-$sh_ps1pc_start}"
 				sh_ps1pc_end="${4:-$sh_ps1pc_end}"
