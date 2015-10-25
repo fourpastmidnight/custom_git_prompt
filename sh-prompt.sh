@@ -218,6 +218,27 @@
 #       behavior.
 #
 
+# If the user has .git-prompt.sh or git-prompt.sh in their home directory,
+# source these versions of git-prompt (which contains __git_ps1).
+#
+# Otherwise, I used the code used by Git for Windows located in
+# /etc/profile.d/git-prompt.sh that attempts to find the Git for Windows
+# supplied version of git-prompt.sh and sources that.
+if [[ -e ~/.git-prompt.sh ]]; then
+	. ~/.git-prompt.sh
+elif [[ -e ~/git-prompt.sh ]]; then
+	. ~/git-propmt.sh
+elif test -z "$WINELOADERNOEXEC"; then
+	GIT_EXEC_PATH="$(git --exec-path 2>/dev/null)"
+	COMPLETION_PATH="${GIT_EXEC_PATH%/libexec/git-core}"
+	COMPLETION_PATH="${COMPLETION_PATH%/lib/git-core}"
+	COMPLETION_PATH="$COMPLETION_PATH/share/git/completion"
+	if test -f "$COMPLETION_PATH/git-prompt.sh"; then
+		. "$COMPLETION_PATH/git-completion.bash"
+		. "$COMPLETION_PATH/git-prompt.sh"
+	fi
+fi
+
 function __sh_ps1_is_declared()
 {
 	case $(declare | grep -c "$1=") in
@@ -334,27 +355,6 @@ function __sh_ps1()
 {
 	# Preserve exit status.
 	local exit=$?
-	
-	# If the user has .git-prompt.sh or git-prompt.sh in their home directory,
-	# source these versions of git-prompt (which contains __git_ps1).
-	#
-	# Otherwise, I used the code used by Git for Windows located in
-	# /etc/profile.d/git-prompt.sh that attempts to find the Git for Windows
-	# supplied version of git-prompt.sh and sources that.
-	if [[ -e ~/.git-prompt.sh ]]; then
-		. ~/.git-prompt.sh
-	elif [[ -e ~/git-prompt.sh ]]; then
-		. ~/git-propmt.sh
-	elif test -z "$WINELOADERNOEXEC"; then
-		GIT_EXEC_PATH="$(git --exec-path 2>/dev/null)"
-		COMPLETION_PATH="${GIT_EXEC_PATH%/libexec/git-core}"
-		COMPLETION_PATH="${COMPLETION_PATH%/lib/git-core}"
-		COMPLETION_PATH="$COMPLETION_PATH/share/git/completion"
-		if test -f "$COMPLETION_PATH/git-prompt.sh"; then
-			. "$COMPLETION_PATH/git-completion.bash"
-			. "$COMPLETION_PATH/git-prompt.sh"
-		fi
-	fi
 	
 	local sh_ps1pc_start=""
 	local sh_ps1pc_end=""
