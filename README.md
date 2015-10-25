@@ -72,12 +72,13 @@ SH_PS1_FORMAT_STRING
 
 :   If you are not inside a git repository (or `__git_ps1` is not defined), then the <samp>[git_repository_info]</samp> is not displayed.
 :   The meanings of the format specifier tokens are listed below:
-:   | Format Token | Description                                     |
-|:------------:|:------------------------------------------------|
-| `%u`         | Gets replaced with `SH_PS1_USERNAME`            |
-| `%z`         | Gets replaced with `SH_PS1_USER_HOST_SEPARATOR` |
-| `%h`         | Gets replaced with `SH_PS1_HOSTNAME`            |
-| `%w`         | Gets replaced with `SH_PS1_PWD`                 |
+
+| Format Token | Description                                                                                                                                                                                   |
+|:------------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `%u`         | Gets replaced with `SH_PS1_USERNAME`                                                                                                                                                          |
+| `%z`         | Gets replaced with `SH_PS1_USER_HOST_SEPARATOR`                                                                                                                                               |
+| `%h`         | Gets replaced with `SH_PS1_HOSTNAME`                                                                                                                                                          |
+| `%w`         | Gets replaced with `SH_PS1_PWD`                                                                                                                                                               |
 | `%v`         | If `__git_ps1` is defined, and you are in a directory that houses a git repository, then this token is indicates where the git repository information will be displayed in your shell prompt. |
 :    Some notes regarding the use of this variable:
 :   1. You can place these tokens in any order.
@@ -153,13 +154,14 @@ GIT_PS1_SHOWSTASHSTATE
 
 GIT_PS1_SHOWUPSTREAM
 :   If you would like to see the difference between `HEAD` and its upstream, set this environment variable to `auto`.  A `<` indicates you are behind, `>` indicates you are ahead, `<>` indicates you have diverged, and `=` indicates that there is no difference between your copy of the branch and the upstream branch. You can further control behaviour of displaying upstream branch information by setting this environment variable to a space-separated list of values shown in the table below:
-:   | Value | Description |
-|:--------|:---------------------------------------------------------------------------------------------------------|
+
+| Value   | Description                                                                                      |
+|:--------|:-------------------------------------------------------------------------------------------------|
 | verbose | Shows the number of commits your copy of the branch is ahead/behind (+/-) of the upstream branch |
-| name    | If verbose is specified, then also show the upstream abbreviation name                         |
-| legacy  | Don't use the '--count' option available in recent versions of `git-rev-list`                            |
-| git     | Always compare `HEAD` to `@{upstream}` |
-| svn     | Always compare `HEAD` to your SVN upstream |
+| name    | If verbose is specified, then also show the upstream abbreviation name                           |
+| legacy  | Don't use the '--count' option available in recent versions of `git-rev-list`                    |
+| git     | Always compare `HEAD` to `@{upstream}`                                                           |
+| svn     | Always compare `HEAD` to your SVN upstream                                                       |
 
 
 :   By default, `__git_ps1` will compare `HEAD` to your SVN upstream if it can find one, or `@{upstream}` otherwise.  Once you have set this environment variable, you can override it on a per-repository basis by setting the git repository configuration variable `bash.showUpstream`. To change how a particular repository shows this information after setting this environment variable, run the command:
@@ -172,12 +174,13 @@ GIT_PS1_STATESEPARATOR
 
 GIT_PS1_DESCRIBE_STYLE
 :   If you would like to see more information about the identity of commits checked out as a detached `HEAD`, set this environment variable to one of these values:
-:   | Value      | Description                                           |
-|:-----------|:------------------------------------------------------|
-| `contains` | Displays a value relative to a newer annotated tag as the current branch name, for example, `(v1.6.3.2~35)` |
-| `branch`   | Displays a value relative to newer tag or branch as the current branch name, for example, `(master~4)`    |
+
+| Value      | Description                                                                                                          |
+|:-----------|:---------------------------------------------------------------------------------------------------------------------|
+| `contains` | Displays a value relative to a newer annotated tag as the current branch name, for example, `(v1.6.3.2~35)`          |
+| `branch`   | Displays a value relative to newer tag or branch as the current branch name, for example, `(master~4)`               |
 | `describe` | Displays a value relative to an older annotated tag as the current branch name, for example `(v1.6.3.1-13-gdd42c2f)` |
-| default    | Displays the exactly matching tag as the current branch name. |
+| default    | Displays the exactly matching tag as the current branch name.                                                        |
 
 GIT_PS1_SHOWCOLORHINTS
 :   If this environment variable is set to a non-empty value, `__git_ps1` displays colored repository branch state information. The colors are based on the colored output from the `git status -sb` command.
@@ -203,22 +206,23 @@ The following list describes the available format string environment variables t
 
 GIT_PS1_SHOWUPSTREAM_STYLE
 :   This environment variable can be set to one of the following values (the **Verbose** column indicates whether or not `GIT_PS1_SHOWUPSTREAM` contains `verbose` as one of its values):
-:  | Value       | Verbose | Behind                       | Ahead             | Diverged            | Equal |
-|:------------|:--------:|:----------------------------:|:-----------------:|:-------------------:|:-----:|
-| default        | no       | <samp>&lt;</samp>            | <samp>&gt;</samp> | <samp>&lt;&gt;</samp> | <samp>=</samp> |
-| default        | yes      | <samp>u-{count}</samp> | <samp>u+{count}</samp> | <samp>u+{count}-{count}</samp> | <samp>u=</samp>   |
-| arrow       | no       | <samp>&#x2193;</samp>        | <samp>&#x2191;</samp>| <samp>&#x2193;&#x2191;</samp>      | <samp>&#x2261;</samp> |
-| arrow       | yes      | <samp>&#x2193;{count}</samp> | <samp>{count}&#x2191;</samp> | <samp>{count}&#x2193;&#x2191;{count}</samp> | <samp>&#x2261;</samp> |
-| rlarrowhead | no | <samp>&#x02C2;</samp> | <samp>&#x02C3;</samp> | <samp>&#x02C2;&#x02C3;</samp> | <samp>&#x2261;</samp> |
-| rlarrowhead | yes | <samp>&#x02C2;{count}</samp> | <samp>{count}&#x02C3;</samp> | <samp>{count}&#x02C2;&#x02C3;{count}</samp> | <samp>&#x2261;</samp> |
-| udarrowhead | no | <samp>&#x02C5;</samp> | <samp>&#x02C4;</samp> | <samp>&#x02C5;&#x02C4;</samp> | <samp>&#x2261;</samp> |
-| udarrowhead | yes | <samp>&#x02C5;{count}</samp> | <samp>{count}&#x02C4;</samp> | <samp>{count}&#x02C5;&#x02C4;{count}</samp> | <samp>&#x2261;</samp> |
-| rltri | no | <samp>&#x25BC;</samp> | <samp>&#x25B2;</samp> | <samp>&#x25BC;&#x25B2;</samp> | <samp>&#x2261;</samp> |
-| rltri | yes | <samp>{count}&#x25BC;</samp> | <samp>&#x25B2;{count}</samp> | <samp>{count}&#x25BC;&#x25B2;{count}</samp> | <samp>&#x2261;</samp> |
-| udtri | no  | <samp>&#x25C4;</samp> | <samp>&#x25BA;</samp> | <samp>&#x25C4;&#x25BA;</samp> | <samp>&#x2261;</samp> |
-| udtri | yes | <samp>{count}&#x25C4;</samp> | <samp>&#x25BA;{count}</samp> | <samp>{count}&#x25C4;&#x25BA;{count}</samp> | <samp>&#x2261;</samp> |
-| custom | no | <samp>{_user defined_}</samp> | <samp>{_user defined_}</samp> | <samp>{behind_glyph}{ahead_glyph}</samp> | <samp>_user defined_</samp> |
-| custom | yes | <samp>{count}{_user defined_}</samp> | <samp>{_user_defined_}{count}</samp> | <samp>{count}{behind_glyph}{ahead_glyph}{count}</samp> | <samp>{_user defined_}</samp> |
+ 
+| Value       | Verbose  | Behind                               | Ahead                                | Diverged                                               | Equal                         |
+|:------------|:--------:|:------------------------------------:|:------------------------------------:|:------------------------------------------------------:|:-----------------------------:|
+| default     | no       | <samp>&lt;</samp>                    | <samp>&gt;</samp>                    | <samp>&lt;&gt;</samp>                                  | <samp>=</samp>                |
+| default     | yes      | <samp>u-{count}</samp>               | <samp>u+{count}</samp>               | <samp>u+{count}-{count}</samp>                         | <samp>u=</samp>               |
+| arrow       | no       | <samp>&#x2193;</samp>                | <samp>&#x2191;</samp>                | <samp>&#x2193;&#x2191;</samp>                          | <samp>&#x2261;</samp>         |
+| arrow       | yes      | <samp>&#x2193;{count}</samp>         | <samp>{count}&#x2191;</samp>         | <samp>{count}&#x2193;&#x2191;{count}</samp>            | <samp>&#x2261;</samp>         |
+| rlarrowhead | no       | <samp>&#x02C2;</samp>                | <samp>&#x02C3;</samp>                | <samp>&#x02C2;&#x02C3;</samp>                          | <samp>&#x2261;</samp>         |
+| rlarrowhead | yes      | <samp>&#x02C2;{count}</samp>         | <samp>{count}&#x02C3;</samp>         | <samp>{count}&#x02C2;&#x02C3;{count}</samp>            | <samp>&#x2261;</samp>         |
+| udarrowhead | no       | <samp>&#x02C5;</samp>                | <samp>&#x02C4;</samp>                | <samp>&#x02C5;&#x02C4;</samp>                          | <samp>&#x2261;</samp>         |
+| udarrowhead | yes      | <samp>&#x02C5;{count}</samp>         | <samp>{count}&#x02C4;</samp>         | <samp>{count}&#x02C5;&#x02C4;{count}</samp>            | <samp>&#x2261;</samp>         |
+| rltri       | no       | <samp>&#x25BC;</samp>                | <samp>&#x25B2;</samp>                | <samp>&#x25BC;&#x25B2;</samp>                          | <samp>&#x2261;</samp>         |
+| rltri       | yes      | <samp>{count}&#x25BC;</samp>         | <samp>&#x25B2;{count}</samp>         | <samp>{count}&#x25BC;&#x25B2;{count}</samp>            | <samp>&#x2261;</samp>         |
+| udtri       | no       | <samp>&#x25C4;</samp>                | <samp>&#x25BA;</samp>                | <samp>&#x25C4;&#x25BA;</samp>                          | <samp>&#x2261;</samp>         |
+| udtri       | yes      | <samp>{count}&#x25C4;</samp>         | <samp>&#x25BA;{count}</samp>         | <samp>{count}&#x25C4;&#x25BA;{count}</samp>            | <samp>&#x2261;</samp>         |
+| custom      | no       | <samp>{_user defined_}</samp>        | <samp>{_user defined_}</samp>        | <samp>{behind_glyph}{ahead_glyph}</samp>               | <samp>_user defined_</samp>   |
+| custom      | yes      | <samp>{count}{_user defined_}</samp> | <samp>{_user_defined_}{count}</samp> | <samp>{count}{behind_glyph}{ahead_glyph}{count}</samp> | <samp>{_user defined_}</samp> |
 
 : If this environment variable is not declared, null, empty, or not one of the values defined in the table above, then the value defaults to `default` in the above table.
 : > **NOTE**
