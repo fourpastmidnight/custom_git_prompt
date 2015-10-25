@@ -99,22 +99,22 @@ SH_PS1_DONT_COLORIZE_PROMPT=0
 #SH_PS1_FORMAT_STRING="%u%z%h%w%v"
 
 # Fixup git-bash in non login env
-if [[ -e ~/.bash-prompt.sh ]]; then
-	shopt -q login_shell || . ~/.bash-prompt.sh
-elif [[ -e ~/bash-prompt.sh ]]; then
-	shopt -q login_shell || . ~/bash-prompt.sh
+if [[ -e ~/.sh-prompt.sh ]]; then
+	. ~/.bash-prompt.sh
+elif [[ -e ~/sh-prompt.sh ]]; then
+	. ~/bash-prompt.sh
 elif [[ -e ~/.git-prompt.sh ]]; then
 	shopt -q login_shell || . ~/.git-prompt.sh
-	PROMPT_COMMAND='__git_ps1 "$(tput setaf 2)\u@\h ${MSYSTEM+$(tput setaf 5)$MSYSTEM }$(tput setaf 3)\w$(tput sgr0)" "\n\\\$ " " (%s)"'
+	PROMPT_COMMAND='__git_ps1 "$(tput setaf 2)\u@\h $(tput setaf 3)\w$(tput sgr0)" "\n\\\$ " " (%s)"'
 	return
 elif [[ -e ~/git-prompt.sh ]]; then
 	shopt -q login_shell || . ~/git-prompt.sh
-	PROMPT_COMMAND='__git_ps1 "$(tput setaf 2)\u@\h ${MSYSTEM+$(tput setaf 5)$MSYSTEM }$(tput setaf 3)\w$(tput sgr0)" "\n\\\$ " " (%s)"'
+	PROMPT_COMMAND='__git_ps1 "$(tput setaf 2)\u@\h $(tput setaf 3)\w$(tput sgr0)" "\n\\\$ " " (%s)"'
 	return
 else
 	shopt -q login_shell || . /etc/profile.d/git-prompt.sh
-	PROMPT_COMMAND='__git_ps1 "$(tput setaf 2)\u@\h ${MSYSTEM+$(tput setaf 5)$MSYSTEM }$(tput setaf 3)\w$(tput sgr0)" "\n\\\$ " " (%s)"'
+	PROMPT_COMMAND='__git_ps1 "$(tput setaf 2)\u@\h $(tput setaf 3)\w$(tput sgr0)" "\n\\\$ " " (%s)"'
 	return
 fi
 
-PROMPT_COMMAND='__bash_ps1 "${BASH_PS1_FORMAT_STRING-}" "\n$(tput setaf 15)GIT:$(tput sgr0) %s$(tput sgr0)"'
+PROMPT_COMMAND='__sh_ps1'
