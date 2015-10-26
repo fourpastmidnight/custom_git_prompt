@@ -401,7 +401,7 @@ function __sh_ps1()
 	local p="$sh_ps1pc_end${SH_PS1_PROMPT:-\n\\\$ }"
 
 	case "${SH_PS1_DONT_COLORIZE_PROMPT:-0}" in
-		1)	__sh_ps1_colorize_promptstring ;;
+		0)	__sh_ps1_colorize_promptstring ;;
 	esac	
 	
 	# Substitute the "format specifiers" u, h, etc. with $u, $h, etc.
