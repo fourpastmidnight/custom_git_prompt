@@ -103,8 +103,7 @@ printf -v __git_printf_supports_v -- '%s' yes >/dev/null 2>&1
 __git_ps1_show_upstream ()
 {
 	local key value
-	local svn_remote svn_url_pattern count n
-	local ahead_glyph behind_glyph diverged_glyph upstream_separator_glyph up_to_date_glyph
+	local svn_remote svn_url_pattern count n ahead_glyph behind_glyph diverged_glyph upstream_separator_glyph up_to_date_glyph
 	local upstream=git legacy="" verbose="" name=""
 
 	svn_remote=()
@@ -189,12 +188,17 @@ __git_ps1_show_upstream ()
 		fi
 	fi
 	
-	# Set the separator character to be used between upstream/downstream info.
-	# Default to the empty string.
-	upstream_separator_glyph="${GIT_PS1_SHOWUPSTREAM_SEPARATOR-}"
+	# Determine if a separator character is to be used between upstream/downstream info
+	if [ -n "${GIT_PS1_SHOWUPSTREAM_USE_SEPARATOR-}" ]; then
+		if [[ -z "${GIT_PS1_SHOWUPSTREAM_SEPARATOR_GLYPH}" ]]; then
+			upstream_separator_glyph=""
+		else
+			upstream_separator_glyph="${GIT_PS1_SHOWUPSTREAM_SEPARATOR_GLYPH}"
+		fi
+	fi
 		
 	# Determine which glyph to use for ahead/behind upstream.
-	case "${GIT_PS1_SHOWUPSTREAM_STYLE}" in
+	case "${GIT_PS1_SHOWUPSTREAM_GLYPH}" in
 	"arrow")
 		ahead_glyph="↑"
 		behind_glyph="↓"
@@ -216,10 +220,10 @@ __git_ps1_show_upstream ()
 		behind_glyph="▼"
 		;;
 	"custom")
-		ahead_glyph="${GIT_PS1_SHOWUPSTREAM_CUSTOM_AHEAD}"
-		behind_glyph="${GIT_PS1_SHOWUPSTREAM_CUSTOM_BEHIND}"
-		diverged_glyph="${GIT_PS1_SHOWUPSTREAM_CUSTOM_DIVERGED}"
-		up_to_date_glyph="${GIT_PS1_SHOWUPSTREAM_CUSTOM_UPTODATE}"
+		ahead_glyph="${GIT_PS1_SHOWUPSTREAM_AHEAD_CUSTOM_GLYPH}"
+		behind_glyph="${GIT_PS1_SHOWUPSTREAM_BEHIND_CUSTOM_GLYPH}"
+		diverged_glyph="${GIT_PS1_SHOWUPSTREAM_DIVERGED_CUSTOM_GLYPH}"
+		up_to_date_glyph="${GIT_PS1_SHOWUPSTREAM_UP_TO_DATE_CUSTOM_GLYPH}"
 		;;
 	*)
 		if [[ -z "$verbose" ]]; then
@@ -236,24 +240,16 @@ __git_ps1_show_upstream ()
 		;;
 	esac
 	
-	case "$GIT_PS1_SHOWUPTREAM_STYLE}" in
-		arrow|rlarrowhead|udarrowhead|rltri|udtri|custom)
-	#if [[ $GIT_PS1_SHOWUPSTREAM_GLYPH =~ arrow|rlarrowhead|udarrowhead|rltri|udtri|custom ]]; then
-			diverged_glyph="${behind_glyph}${upstream_separator_glyph}${ahead_glyph}"
-			up_to_date_glyph="≡"
-			
-			if [[ $verbose -eq 1 ]]; then
-				ahead_glyph=" ${ahead_glyph}${count#0	}"
-				behind_glyph=" ${count%	0}${behind_glyph}"
-				diverged_glyph=" ${behind_glyph}${upstream_separator_glyph}${ahead_glyph}"
-				up_to_date_glyph=" ${up_to_date_glyph}"
-			fi
-		;;
-		*)
-			:
-		;;
-	#fi
-	esac
+	if [[ $GIT_PS1_SHOWUPSTREAM_GLYPH =~ arrow|rlarrowhead|udarrowhead|rltri|udtri|custom ]]; then
+		diverged_glyph="${behind_glyph}${upstream_separator_glyph}${ahead_glyph}"
+		up_to_date_glyph="≡"
+		if [[ $verbose -eq 1 ]]; then
+			ahead_glyph=" ${ahead_glyph}${count#0	}"
+			behind_glyph=" ${count%	0}${behind_glyph}"
+			diverged_glyph=" ${behind_glyph}${upstream_separator_glyph}${ahead_glyph}"
+			up_to_date_glyph=" ${up_to_date_glyph}"
+		fi
+	fi
 
 	# calculate the result
 	if [[ -z "$verbose" ]]; then
@@ -261,12 +257,16 @@ __git_ps1_show_upstream ()
 		"") # no upstream
 			p="" ;;
 		"0	0") # equal to upstream
+			#p="=" ;;
 			p="${up_to_date_glyph}" ;;
 		"0	"*) # ahead of upstream
+			#p=">" ;;
 			p="${ahead_glyph}" ;;
 		*"	0") # behind upstream
+			#p="<" ;;
 			p="${behind_glyph}" ;;
 		*)	    # diverged from upstream
+			#p="<>" ;;
 			p="${diverged_glyph}" ;;
 		esac
 	else
@@ -274,12 +274,16 @@ __git_ps1_show_upstream ()
 		"") # no upstream
 			p="" ;;
 		"0	0") # equal to upstream
+			#p=" u=" ;;
 			p="${up_to_date_glyph}" ;;
 		"0	"*) # ahead of upstream
+			#p=" u+${count#0	}" ;;
 			p="${ahead_glyph}" ;;
 		*"	0") # behind upstream
+			#p=" u-${count%	0}" ;;
 			p="${behind_glyph}" ;;
 		*)	    # diverged from upstream
+			#p=" u+${count#*	}-${count%	*}" ;;
 			p="${diverged_glyph}" ;;
 		esac
 		if [[ -n "$count" && -n "$name" ]]; then
@@ -311,6 +315,7 @@ __git_ps1_colorize_gitstring ()
 	else
 		# Using \[ and \] around colors is necessary to prevent
 		# issues with command line editing/browsing/completion!
+		#local c_red='\[\e[31m\]'
 		local c_red="$(tput setaf 1)"
 		local c_green="$(tput setaf 2)"
 		local c_lblue="$(tput setaf 4)"
@@ -322,28 +327,29 @@ __git_ps1_colorize_gitstring ()
 
 	local branch_color=""
 	if [ $detached = no ]; then
-		branch_color="${GIT_PS1_OKBRANCH_COLOR:-$ok_color}"
+		branch_color="${GIT_PS1_OK_BRANCH_COLOR:-$ok_color}"
 	else
-		branch_color="${GIT_PS1_DETACHEDHEAD_COLOR:-$bad_color}"
+		branch_color="${GIT_PS1_DETACHED_HEAD_COLOR:-$bad_color}"
 	fi
 	c="$branch_color$c"
 
 	z="$c_clear$z"
-	if [ "$w" = "${unstaged_changes}" ]; then
-		w="${GIT_PS1_UNSTAGEDCHANGES_COLOR:-$bad_color}$w$c_clear"
+	#if [ "$w" = "*" ]; then
+	if [ "$w" = "${unstaged_files}" ]; then
+		w="${GIT_PS1_UNSTAGED_FILES_GLYPH_COLOR:-$bad_color}$w$c_clear"
 	fi
 	if [ -n "$i" ]; then
 		if [ "$i" = "${initial_commit}" ]; then
-			i="${GIT_PS1_INITIALCOMMIT_COLOR:-$ok_color}$i$c_clear"
+			i="${GIT_PS1_INITIAL_COMMIT_GLYPH_COLOR:-$ok_color}$i$c_clear"
 		else
-			i="${GIT_PS1_STAGEDCHANGES_COLOR:-$ok_color}$i$c_clear"
+			i="${GIT_PS1_STAGED_FILES_GLYPH_COLOR:-$ok_color}$i$c_clear"
 		fi
 	fi
 	if [ -n "$s" ]; then
-		s="${GIT_PS1_STASHSTATE_COLOR:-$flags_color}$s$c_clear"
+		s="${GIT_PS1_STASHED_STATE_GLYPH_COLOR:-$flags_color}$s$c_clear"
 	fi
 	if [ -n "$u" ]; then
-		u="${GIT_PS1_UNTRACKEDFILES_COLOR:-$bad_color}$u$c_clear"
+		u="${GIT_PS1_UNTRACKED_FILES_GLYPH_COLOR:-$bad_color}$u$c_clear"
 	fi
 	r="$c_clear$r"
 }
@@ -377,11 +383,11 @@ __git_ps1 ()
 	local printf_format=' (%s)'
 	
 	# Customized Git String Glyphs
-	local staged_changes="${GIT_PS1_STAGEDCHANGES:-+}"
-	local unstaged_changes="${GIT_PS1_UNSTAGEDCHANGES:-*}"
-	local untracked_files="${GIT_PS1_UNTRACKEDFILES:-%}"
-	local stash_state="${GIT_PS1_STASHSTATE:-$}"
-	local initial_commit="${GIT_PS1_INITIALCOMMIT:-#}"
+	local staged_files="${GIT_PS1_STAGED_FILES_GLYPH:-+}"
+	local unstaged_files="${GIT_PS1_UNSTAGED_FILES_GLYPH:-*}"
+	local untracked_files="${GIT_PS1_UNTRACKED_FILES_GLYPH:-%}"
+	local stashed_state="${GIT_PS1_STASHED_STATE_GLYPH:-$}"
+	local initial_commit="${GIT_PS1_INITIAL_COMMIT_GLYPH:-#}"
 
 	case "$#" in
 		2|3)	pcmode=yes
@@ -554,9 +560,11 @@ __git_ps1 ()
 		if [ -n "${GIT_PS1_SHOWDIRTYSTATE-}" ] &&
 		   [ "$(git config --bool bash.showDirtyState)" != "false" ]
 		then
-			git diff --no-ext-diff --quiet --exit-code || w="${unstaged_changes}"
+			#git diff --no-ext-diff --quiet --exit-code || w="*"
+			git diff --no-ext-diff --quiet --exit-code || w="${unstaged_files}"
 			if [ -n "$short_sha" ]; then
-				git diff-index --cached --quiet HEAD -- || i="${staged_changes}"
+				#git diff-index --cached --quiet HEAD -- || i="+"
+				git diff-index --cached --quiet HEAD -- || i="${staged_files}"
 			else
 				i="${initial_commit}"
 			fi
@@ -564,13 +572,15 @@ __git_ps1 ()
 		if [ -n "${GIT_PS1_SHOWSTASHSTATE-}" ] &&
 		   git rev-parse --verify --quiet refs/stash >/dev/null
 		then
-			s="${stash_state}"
+			#s="$"
+			s="${stashed_state}"
 		fi
 
 		if [ -n "${GIT_PS1_SHOWUNTRACKEDFILES-}" ] &&
 		   [ "$(git config --bool bash.showUntrackedFiles)" != "false" ] &&
 		   git ls-files --others --exclude-standard --directory --no-empty-directory --error-unmatch -- ':/*' >/dev/null 2>/dev/null
 		then
+			#u="%${ZSH_VERSION+%}"
 			u="${untracked_files}${ZSH_VERSION+%}"
 		fi
 
