@@ -261,9 +261,9 @@ function __sh_ps1_colorize_promptstring()
 	# and subsequently also set SH_PS1_USERNAME_COLOR="$(tput setaf 2)", then you would expect that
 	# Hello! would still by displayed in cyan while the username would be displayed in green.
 	if ! __sh_ps1_is_declared SH_PS1_USERNAME_COLOR; then
-		u="${u/\\u/$user_host_color\\u}"
+		u="${u//\\u/$user_host_color\\u}"
 	else
-		u="${u/\\u/${SH_PS1_USERNAME_COLOR:-$(tput sgr0)}\\u}"
+		u="${u//\\u/${SH_PS1_USERNAME_COLOR:-$(tput sgr0)}\\u}"
 	fi
 	
 	# TL;DR : Don't need to "preserve" color formatting for the username/hostname separator character.
@@ -281,15 +281,15 @@ function __sh_ps1_colorize_promptstring()
 	fi
 	
 	if ! __sh_ps1_is_declared SH_PS1_HOSTNAME_COLOR; then
-		h="${h/\\h/$user_host_color\\h}"
+		h="${h//\\h/$user_host_color\\h}"
 	else
-		h="${h/\\h/${SH_PS1_HOSTNAME_COLOR:-$(tput sgr0)}\\h}"
+		h="${h//\\h/${SH_PS1_HOSTNAME_COLOR:-$(tput sgr0)}\\h}"
 	fi
 	
 	if ! __sh_ps1_is_declared SH_PS1_PWD_COLOR; then
-		w="${w/\\w/$pwd_color\\w}"
+		w="${w//\\w/$pwd_color\\w}"
 	else
-		w="${w/\\w/${SH_PS1_PWD_COLOR:-$(tput sgr0)}\\w}"
+		w="${w//\\w/${SH_PS1_PWD_COLOR:-$(tput sgr0)}\\w}"
 	fi
 	
 	p="${SH_PS1_PROMPT_COLOR-$prompt_color}$p$(tput sgr0)"
@@ -365,32 +365,32 @@ function __sh_ps1()
 	# Set the initial sh string, defaulted to "\u@\h \w\n\\\$"
 	# The "format specifiers" have the following interpretation:
 	#
-	#   %u :  Username. Will get substituted to \u or the value provided in BASH_PS1_USERNAME
-	#   %z :  Username/hostname separator. Will get substituted to @ or the value provided in BASH_PS1_USER_HOST_SEPARATOR
-	#   %h :  Hostname. Will get substituted to \h or the value provided in BASH_PS1_HOSTNAME
-	#   %w :  Present working directory. Will get substituted to \w or the value provided in BASH_PS1_PWD
-	#   %v :  Version Control Prompt. Place this format specifier where ever in your bash prompt you want 
-	#         your source code version control prompt to be displayed. This specifier will be replaced by,
-	#         executing __git_ps1 from git-prompt.sh (or your local sourced version), for example, when git
-	#		  is your source code control management system.
-	local sh_printf_format="%u%z%h%w%v"
-	
+	#   u :  Username. Will get substituted to \u or the value provided in SH_PS1_USERNAME
+	#   z :  Username/hostname separator. Will get substituted to @ or the value provided in SH_PS1_USER_HOST_SEPARATOR
+	#   h :  Hostname. Will get substituted to \h or the value provided in SH_PS1_HOSTNAME
+	#   w :  Present working directory. Will get substituted to \w or the value provided in SH_PS1_PWD
+	#   v :  Version Control Prompt. Place this format specifier where ever in your bash prompt you want 
+	#        your source code version control prompt to be displayed. This specifier will be replaced by,
+	#        executing __git_ps1 from git-prompt.sh (or your local sourced version), for example, when git
+	#	     is your source code control management system.
+	local sh_printf_format="uzhwv"
+	local title
 	local git_printf_format
 	
 	# Process function arguments.
 	case "$#" in
-		3)		sh_printf_format="${1:-$sh_printf_format}"
-				sh_printf_format="${3+\033]2;$3\a}${sh_printf_format// /}" # TODO: this only strips spaces--need to strip all white space
+		3)		title="${3+\033]2;$3\a}"
+				sh_printf_format="${1:-$sh_printf_format}"
 				# Better yet, create a map of integers to format tokens indicating the relative ordering of format tokens to one another.
 				# This might allow us to not perform so much string manipulation--merely concatenating all the required values once we
 				# have figured out what they all are. Hopefully, this change will improve the speed of this script.
 				git_printf_format="${2:-}"
 			;;
 		*)		sh_printf_format="${1:-$sh_printf_format}"
-				sh_printf_format="${sh_printf_format// /}"
 				git_printf_format="${2:-}"
 				sh_ps1pc_start="${3:-$sh_ps1pc_start}"
 				sh_ps1pc_end="${4:-$sh_ps1pc_end}"
+				title="${5+\033]2;$5\a}"
 			;;
 	esac
 
@@ -413,22 +413,22 @@ function __sh_ps1()
 	#
 	# NOTE: %v in the format string will be substituted with your vcs prompt formatter, 
 	# i.e. __git_ps1, so we don't substitute it here.
-	sh_printf_format="${sh_printf_format/\%u/$u}"
-	sh_printf_format="${sh_printf_format/\%z/$z}"
-	sh_printf_format="${sh_printf_format/\%h/$h}"
-	sh_printf_format="${sh_printf_format/\%w/$w}"
+	sh_printf_format="${sh_printf_format//u/$u}"
+	sh_printf_format="${sh_printf_format//z/$z}"
+	sh_printf_format="${sh_printf_format//h/$h}"
+	sh_printf_format="${sh_printf_format//w/$w}"
 	sh_printf_format="$sh_printf_format$p"
 	
 	if __sh_ps1_is_function_defined __git_ps1; then
 		# Split the sh_printf_format on %v and pass the part before %v to the __git_ps1pc_start param
 		# and the part after %v to the __git_ps1pc_end param.
-		local __git_ps1pc_end="${sh_printf_format##*\%v}"
-		local __git_ps1pc_start="${sh_ps1pc_start}${sh_printf_format%\%v*}$(tput sgr0)"
+		local __git_ps1pc_end="${sh_printf_format##*v}"
+		local __git_ps1pc_start="${sh_ps1pc_start}${sh_printf_format%v*}$(tput sgr0)"
 		
 		# Call __git_ps1 to set the PS1 variable.
-		__git_ps1 "$__git_ps1pc_start" "$__git_ps1pc_end" ${git_printf_format+"${git_printf_format}"}
+		__git_ps1 "$title$__git_ps1pc_start" "$__git_ps1pc_end" ${git_printf_format+"${git_printf_format}"}
 	else
-		PS1="${sh_printf_format}"
+		PS1="${title}${sh_printf_format}"
 	fi
 	
 	return $exit

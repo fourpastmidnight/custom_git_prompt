@@ -82,11 +82,11 @@ Just remember, the more text you display in your prompt, the slower it will be t
 <dt>SH_PS1_FORMAT_STRING</dt>
 <dd>
   <p>Defines the tokens that define what portions of the bash prompt should be displayed, and in what order. The <samp>SH_PS1_PROMPT</samp> is always appended to this string.</p>
-  <p>If this variable is undeclared, null, or empty, it defaults to <samp>"%u%z%h%w%v"</samp>. By default, this results in the following prompt:</p>
+  <p>If this variable is undeclared, null, or empty, it defaults to <samp>"uzhwv"</samp>. By default, this results in the following prompt:</p>
   <pre>username@host pwd [git_repository_info]
 $</pre>
   <p>If you are not inside a git repository (or <code>__git_ps1</code> is not defined), then the <samp>[git_repository_info]</samp> is not displayed.</p>
-  <p>The meanings of the format specifier tokens are listed below:</p>
+  <p>The meaning of each of the format specifier tokens is listed in the table below:</p>
   <table summary="SH_PS1_FORMAT_STRING format token descriptions.">
 	  <thead>
 	    <tr>
@@ -96,23 +96,23 @@ $</pre>
 	  </thead>
 	  <tbody>
 	    <tr>
-	      <td align="center"><samp>%u</samp></td>
+	      <td align="center"><samp>u</samp></td>
 	      <td>Gets relpaced with <samp>SH_PS1_USERNAME</samp></td>
 	    </tr>
 	    <tr>
-	      <td align="center"><samp>%z</samp></td>
+	      <td align="center"><samp>z</samp></td>
 	      <td>Gets replaced with <samp>SH_PS1_USER_HOST_SEPARATOR</samp></td>
 	    </tr>
 	    <tr>
-	      <td align="center"><samp>%h</samp></td>
+	      <td align="center"><samp>h</samp></td>
 	      <td>Gets replaced with <samp>SH_PS1_HOSTNAME</samp></td>
 	    </tr>
 	    <tr>
-	      <td align="center"><samp>%w</samp></td>
+	      <td align="center"><samp>w</samp></td>
 	      <td>Gets replaced with <samp>SH_PS1_PWD</samp></td>
 	    </tr>
 	    <tr>
-	      <td align="center"><samp>%v</samp></td>
+	      <td align="center"><samp>v</samp></td>
 	      <td>If <code>__git_ps1</code> is defined, and you are in a directory that houses a <i>git</i> repository, then this token is indicates where the <i>git</i> repository information will be displayed in your shell prompt.</td>
 	    </tr>
 	  </tbody>
@@ -120,13 +120,18 @@ $</pre>
     <p>Some notes regarding the use of this variable:</p>
     <ol>
       <li>You can place these tokens in any order.</li>
-      <li>All whitespace between tokens is stripped out.</li>
       <li>This variable should only contain these tokens and no other text. Any other text included in this variable may result in unpredictable and unsupported behavior.</li>
-      <li>Any spacing and formatting should occur within the individual format string variables (e.g. <samp>SH_PS1_*</samp> variables discussed above).</li>
-      <li>Unless you need (or want) complex coloring (e.g. you want to format your username using the colors of the rainbow&mdash;yes, this is pointless, but someone out there has done this), you should place all color formatting in the appropriate environment variables discussed in the next section below.</li>
+      <li>Any spacing and formatting you require for your desired shell prompt should be defined through the individual format string variables (e.g. the <samp>SH_PS1_*</samp> variables) discussed above.</li>
     </ol>
   </dd>
 </dl>
+
+> **NOTE**  
+> Unless you require or desire complex shell prompt colorization, you should place all color information for the various aspects of your prompt in the color format string variables discussed in the next section. Placing prompt color information in the formatting variables discussed above could result in unpredictable behavior and may flat out not work.
+>  
+> Remember, the more text you provide in the various pieces of your prompt (including any color information), the slower it will be to display your prompt.
+> 
+> Finally, remember, you should not place any other text in the <samp>SH_PS1_FORMAT_STRING</samp> variable except for the tokens that were listed in th table above. Any other text in this environment variable will most likely result in your prompt not working as expected, if at all.
 
 ###Shell Prompt Color Format String Variables
 The environment variables listed below can be used to customize the colorization of various parts of your shell prompt. You should refrain from including any textual information in these format strings (unless you want or need more complex customization of portions of your shell prompt). Any text other than _command-substitution_ calls to `tput` (or ANSI/VT-100 color escape sequences) may result in unpredictable behavior of this script and is stricty unsupported.
