@@ -166,7 +166,7 @@ Just remember, the more text you display in your prompt, the slower it will be t
   </dd>
 </dl>
 
-> **WARNING**
+> **WARNING**  
 > There's nothing stopping you from placing other text in the variables discussed above, but they're intended to contain only color information for the various pieces of the prompt string. 
 > 
 > You can experiment with values other than purely color information, but you do so at your own risk.
@@ -237,7 +237,11 @@ Many of the effects of the standard `git-prompt.sh` environment variables can be
       </tbody>
     </table>
     <p>By default, <code>__git_ps1</code> will compare <samp>HEAD</samp> to your SVN upstream if it can find one, or <samp>@{upstream}</samp> otherwise.  Once you have set this environment variable, you can override it on a per repository basis by setting the <i>git</i> repository configuration variable <samp>bash.showUpstream</samp>. To change how a particular repository shows this information after setting this environment variable, run the following command inside the repository:</p>
-    <pre class="prettify"><code class="language-bash hljs"># Running this command sets bash.showUntrackedFiles to its default value.<br /># Of course, you can use any of the values from the table above.<br /><br />$ git config bash.showUntrackedFiles="git"</code></pre>
+    <pre class="prettify">
+        # Running this command sets bash.showUntrackedFiles to its default value.
+        # Of course, you can use any of the values from the table above.
+        $ git config bash.showUntrackedFiles="git"
+    </pre>
   </dd>
   <dt>GIT_PS1_STATESEPARATOR</dt>
   <dd>
