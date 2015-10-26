@@ -227,7 +227,7 @@
 if [[ -e ~/.git-prompt.sh ]]; then
 	. ~/.git-prompt.sh
 elif [[ -e ~/git-prompt.sh ]]; then
-	. ~/git-propmt.sh
+	. ~/git-prompt.sh
 elif test -z "$WINELOADERNOEXEC"; then
 	GIT_EXEC_PATH="$(git --exec-path 2>/dev/null)"
 	COMPLETION_PATH="${GIT_EXEC_PATH%/libexec/git-core}"
