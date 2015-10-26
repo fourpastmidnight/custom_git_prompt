@@ -82,7 +82,7 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 #GIT_PS1_UNTRACKEDFILES_COLOR="$(tput setaf 1)"
 #GIT_PS1_STASHEDSTATE_COLOR="$(tput setaf 4)"
 
-SH_PS1_DONT_COLORIZE_PROMPT=0
+#SH_PS1_DONT_COLORIZE_PROMPT=0
 
 #SH_PS1_USERNAME_COLOR="$(tput setaf 2)"
 #SH_PS1_HOSTNAME_COLOR="$(tput setaf 2)"
@@ -93,10 +93,10 @@ SH_PS1_DONT_COLORIZE_PROMPT=0
 #SH_PS1_USERNAME="\u"
 #SH_PS1_HOSTNAME="\h"
 #SH_PS1_USER_HOST_SEPARATOR="@"
-#SH_PS1_PWD="\n$(tput setaf 15)PWD: $(tput sgr0)\w"
+#SH_PS1_PWD=" \w"
 
 #SH_PS1_PROMPT="\n\\\$ "
-#SH_PS1_FORMAT_STRING="%u%z%h%w%v"
+#SH_PS1_FORMAT_STRING="uzhwv"
 
 # Fixup git-bash in non login env
 if [[ -e ~/.sh-prompt.sh ]]; then
