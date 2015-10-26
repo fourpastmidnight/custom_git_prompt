@@ -505,4 +505,20 @@ The following list describes the available color format string environment varia
 ##Examples of Shell and/or Git Prompt Customization
 In the following sections, several examples of variable values will be shown and the resulting shell prompt output will be demonstrated.
 
+**TODO: Add examples here.**
+
+##Notes
+
+1. The available "glyphs" that you choose for various parts of the Git string prompt depend on the font you've chosen to use for your terminal window. For example, the font Consolas has a rather limited set of Unicode characters to choose from, while another font such as DejaVu Sans Mono has many Unicode glyphs to choose from.
+2. The modifications made to `git-prompt.sh` may not be compatable with Z-Shell (zsh). Leave me an issue tracker if you find that to be the case. Better yet, submit a pull request.
+
+##Planned, Future Enhancements
+
+1. Create a "build system" that would allow for creating a "theme" that would then generate the required environment variable values and example code which could be placed in your `.bashrc`.
+2. Create a set of pre-defined "themes".
+3. Look into customizing other git scripts colors (e.g. git status).
+    * I find the default red and green colors a bit too dark and saturated for my liking (too hard to see on a black background), which is what spawned these customizations to begin with.
+4. Look into contributing these customizations to Git for Windows. Is there any interest in providing this level of customizability in Git for Windows proper (or perhaps even git itself)??
+    * I'm open to comments on this. If there's little to no interest, then I'll just keep these customizations here.
+
 > Written with [StackEdit](https://stackedit.io/).
