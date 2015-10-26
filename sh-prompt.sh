@@ -239,12 +239,14 @@ elif test -z "$WINELOADERNOEXEC"; then
 	fi
 fi
 
-function __sh_ps1_is_declared()
+function is_function_defined()
 {
-	case $(declare | grep -c "$1=") in
-		0)		return 1;;
-		*)		return 0;;
-	esac
+	declare -Ff "$1" >/dev/null && echo "yes" || echo "no"
+}
+
+function is_variable_declared()
+{
+	declare | grep -c "^$1=" >/dev/null && echo "yes" || echo "no"
 }
 
 function __sh_ps1_colorize_promptstring()
@@ -260,11 +262,10 @@ function __sh_ps1_colorize_promptstring()
 	# within any of the prompt variables. For example, if you specify SH_PS1_USERNAME="$(tput setaf 14)Hello! \u"
 	# and subsequently also set SH_PS1_USERNAME_COLOR="$(tput setaf 2)", then you would expect that
 	# Hello! would still by displayed in cyan while the username would be displayed in green.
-	if ! __sh_ps1_is_declared SH_PS1_USERNAME_COLOR; then
-		u="${u//\\u/$user_host_color\\u}"
-	else
-		u="${u//\\u/${SH_PS1_USERNAME_COLOR:-$(tput sgr0)}\\u}"
-	fi
+	case "$(is_variable_declared SH_PS1_USERNAME_COLOR)" in
+		"yes") u="${u//\\u/${SH_PS1_USERNAME_COLOR:-$(tput sgr0)}\\u}" ;;
+		"no" ) u="${u//\\u/$user_host_color\\u}" ;;
+	esac
 	
 	# TL;DR : Don't need to "preserve" color formatting for the username/hostname separator character.
 	#
@@ -272,25 +273,22 @@ function __sh_ps1_colorize_promptstring()
 	# username and hostname, no "color preservation" needs to be done.
 	# If the user wants a highly customized, colorized username/hostname separator,
 	# they would simply set SH_PS1_USER_HOST_SEPARATOR to some complex string embedded
-	# with color info. Additionalliy, SH_PS1_USER_HOST_SEPARATOR_COLOR provides the overall
-	# base color for the username/hostname separator.
-	if ! __sh_ps1_is_declared SH_PS1_USER_HOST_SEPARATOR_COLOR; then
-		z="$user_host_color$z"
-	else
-		z="${SH_PS1_USER_HOST_SEPARATOR_COLOR-$(tput sgr0)}$z"
-	fi
+	# with color info. Additionally, SH_PS1_USER_HOST_SEPARATOR_COLOR provides the overall
+	# base color for the username/hostname separator.	
+	case "$(is_variable_declared SH_PS1_USER_HOST_SEPARATOR_COLOR)" in
+		"yes") z="${SH_PS1_USER_HOST_SEPARATOR_COLOR-$(tput sgr0)}$z" ;;
+		"no" ) z="$user_host_color$z" ;;
+	esac
 	
-	if ! __sh_ps1_is_declared SH_PS1_HOSTNAME_COLOR; then
-		h="${h//\\h/$user_host_color\\h}"
-	else
-		h="${h//\\h/${SH_PS1_HOSTNAME_COLOR:-$(tput sgr0)}\\h}"
-	fi
+	case "$(is_variable_declared SH_PS1_HOSTNAME_COLOR)" in
+		"yes") h="${h//\\h/${SH_PS1_HOSTNAME_COLOR:-$(tput sgr0)}\\h}" ;;
+		"no" ) h="${h//\\h/$user_host_color\\h}" ;;
+	esac
 	
-	if ! __sh_ps1_is_declared SH_PS1_PWD_COLOR; then
-		w="${w//\\w/$pwd_color\\w}"
-	else
-		w="${w//\\w/${SH_PS1_PWD_COLOR:-$(tput sgr0)}\\w}"
-	fi
+	case "$(is_variable_declared SH_PS1_PWD_COLOR)" in
+		"yes") w="${w//\\w/${SH_PS1_PWD_COLOR:-$(tput sgr0)}\\w}" ;;
+		"no" ) w="${w//\\w/$pwd_color\\w}" ;;
+	esac
 	
 	p="${SH_PS1_PROMPT_COLOR-$prompt_color}$p$(tput sgr0)"
 }
@@ -301,11 +299,6 @@ function __sh_ps1_printf_format_contains()
 		0)		return 1 ;;
 		*)		return 0 ;;
 	esac
-}
-
-function __sh_ps1_is_function_defined()
-{
-	declare -Ff "$1" >/dev/null
 }
 
 # __sh_ps1 accepts 0, 1, 2, or 3 arguments (i.e., format string)
@@ -360,7 +353,6 @@ function __sh_ps1()
 	local sh_ps1pc_end=""
 	
 	# TODO: Determine if we're running in bash vs. zsh and set this variable appropriately.
-	# TODO: Determine if a different "token" needs to be used for zsh support.
 	
 	# Set the initial sh string, defaulted to "\u@\h \w\n\\\$"
 	# The "format specifiers" have the following interpretation:
@@ -379,14 +371,20 @@ function __sh_ps1()
 	
 	# Process function arguments.
 	case "$#" in
-		3)		title="${3+\033]2;$3\a}"
+		0|1|2)
 				sh_printf_format="${1:-$sh_printf_format}"
-				# Better yet, create a map of integers to format tokens indicating the relative ordering of format tokens to one another.
-				# This might allow us to not perform so much string manipulation--merely concatenating all the required values once we
-				# have figured out what they all are. Hopefully, this change will improve the speed of this script.
 				git_printf_format="${2:-}"
 			;;
-		*)		sh_printf_format="${1:-$sh_printf_format}"
+		3)		title="${3+\033]2;$3\a}"
+				sh_printf_format="${1:-$sh_printf_format}"
+				git_printf_format="${2:-}"
+			;;
+		4)		sh_printf_format="${1:-$sh_printf_format}"
+				git_printf_format="${2:-}"
+				sh_ps1pc_start="${3:-$sh_ps1pc_start}"
+				sh_ps1pc_end="${4:-$sh_ps1pc_end}"
+			;;
+		5)		sh_printf_format="${1:-$sh_printf_format}"
 				git_printf_format="${2:-}"
 				sh_ps1pc_start="${3:-$sh_ps1pc_start}"
 				sh_ps1pc_end="${4:-$sh_ps1pc_end}"
@@ -402,11 +400,11 @@ function __sh_ps1()
 	local w="${SH_PS1_PWD:- \\w}"
 	local p="$sh_ps1pc_end${SH_PS1_PROMPT:-\n\\\$ }"
 
-	if [ ! ${SH_PS1_DONT_COLORIZE_PROMPT:-0} = 1 ]; then
-		__sh_ps1_colorize_promptstring
-	fi
+	case "${SH_PS1_DONT_COLORIZE_PROMPT:-0}" in
+		1)	__sh_ps1_colorize_promptstring ;;
+	esac	
 	
-	# Substitute the "format specifiers" %u, %h, etc. with $u, $h, etc.
+	# Substitute the "format specifiers" u, h, etc. with $u, $h, etc.
 	# I couldn't use the exact same method as __git_ps1 because the end user has flexility to
 	# display their shell prompt components in any order they choose, hence this more awkward
 	# substitution syntax.
@@ -419,17 +417,20 @@ function __sh_ps1()
 	sh_printf_format="${sh_printf_format//w/$w}"
 	sh_printf_format="$sh_printf_format$p"
 	
-	if __sh_ps1_is_function_defined __git_ps1; then
-		# Split the sh_printf_format on %v and pass the part before %v to the __git_ps1pc_start param
-		# and the part after %v to the __git_ps1pc_end param.
-		local __git_ps1pc_end="${sh_printf_format##*v}"
-		local __git_ps1pc_start="${sh_ps1pc_start}${sh_printf_format%v*}$(tput sgr0)"
-		
-		# Call __git_ps1 to set the PS1 variable.
-		__git_ps1 "$title$__git_ps1pc_start" "$__git_ps1pc_end" ${git_printf_format+"${git_printf_format}"}
-	else
-		PS1="${title}${sh_printf_format}"
-	fi
+	case "$(is_function_defined __git_ps1)" in
+		"yes")
+			# Split the sh_printf_format on %v and pass the part before %v to the __git_ps1pc_start param
+			# and the part after %v to the __git_ps1pc_end param.
+			local __git_ps1pc_end="${sh_printf_format##*v}"
+			local __git_ps1pc_start="${sh_ps1pc_start}${sh_printf_format%v*}$(tput sgr0)"
+			
+			# Call __git_ps1 to set the PS1 variable.
+			__git_ps1 "$title$__git_ps1pc_start" "$__git_ps1pc_end" ${git_printf_format+"${git_printf_format}"}
+			;;
+		"no" )
+			PS1="${title}${sh_printf_format}"
+			;;
+	esac
 	
 	return $exit
 }
