@@ -501,7 +501,7 @@ The following list describes the available format string environment variables t
 	    </tr>
 	    <tr>
 	      <td align="center"><samp>i</samp></td>
-	      <td>Causes the string defined in <samp>GIT_PS1_STAGEDCHANGES to be displayed when your index contains staged changes.
+	      <td>Causes the string defined in <samp>GIT_PS1_STAGEDCHANGES</samp> to be displayed when your index contains staged changes.
 	      </td>
 	    </tr>
 	    <tr>
