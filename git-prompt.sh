@@ -370,6 +370,8 @@ __git_ps1 ()
 	local ps1pc_end='\$ '
 	local printf_format=' (%s)'
 	
+	# Customized dirty state format string used when GIT_PS1_SHOWDIRTYSTATE is set.
+	local dirtystate_format="${GIT_PS1_DIRTYSTATE_FORMAT:-wisu}"
 	# Customized Git String Glyphs
 	local staged_changes="${GIT_PS1_STAGEDCHANGES:-+}"
 	local unstaged_changes="${GIT_PS1_UNSTAGEDCHANGES:-*}"
@@ -565,7 +567,13 @@ __git_ps1 ()
 		   [ "$(git config --bool bash.showUntrackedFiles)" != "false" ] &&
 		   git ls-files --others --exclude-standard --directory --no-empty-directory --error-unmatch -- ':/*' >/dev/null 2>/dev/null
 		then
-			u="${untracked_files}${ZSH_VERSION+%}"
+			# If running in ZSH, and untracked_files contains one or more '%' symbols,
+			# escape them as '%%' to display the literal '%' character.
+			if [ -n "${ZSH_VERSION}" ] && echo "${untracked_files}" | grep -c "%" >/dev/null; then
+				u="${ZSH_VERSION+${untracked_files//\%/\%\%}}"
+			else
+				u="${untracked_files}"
+			fi
 		fi
 
 		if [ -n "${GIT_PS1_SHOWUPSTREAM-}" ]; then
@@ -573,7 +581,7 @@ __git_ps1 ()
 		fi
 	fi
 
-	local z="${GIT_PS1_STATESEPARATOR-" "}"
+	local z="${GIT_PS1_STATESEPARATOR- }"
 
 	# NO color option unless in PROMPT_COMMAND mode
 	if [ $pcmode = yes ] && [ -n "${GIT_PS1_SHOWCOLORHINTS-}" ]; then
@@ -586,7 +594,17 @@ __git_ps1 ()
 		b="\${__git_ps1_branch_name}"
 	fi
 
-	local f="$w$i$s$u"
+	local f
+	for ((x=0; x<${#dirtystate_format}; x++))
+	{
+		case "${dirtystate_format[0]:$x:1}" in
+			"w") f="$f$w" ;;
+			"i") f="$f$i" ;;
+			"s") f="$f$s" ;;
+			"u") f="$f$u" ;;
+		esac
+	}
+
 	local gitstring="$c$b${f:+$z$f}$r$p"
 
 	if [ $pcmode = yes ]; then
