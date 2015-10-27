@@ -520,7 +520,7 @@ The following list describes the available format string environment variables t
     <ol>
       <li>You can place these tokens in any order.</li>
       <li>This variable should only contain these tokens and no other text. Any other text included in this variable may result in unpredictable and unsupported behavior.</li>
-      <li>Any spacing and formatting you require for your desired git repository branch dirty state should be defined through the individual format string variables discussed above and the color fromat string variables discussed in the following section..</li>
+      <li>Any spacing and formatting you require for your desired git repository branch dirty state should be defined through the individual format string variables discussed above and the color format string variables discussed in the following section..</li>
     </ol>
   </dd>
 </dl>
