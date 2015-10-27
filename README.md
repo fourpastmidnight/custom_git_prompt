@@ -38,7 +38,7 @@ Just remember, the more text you display in your prompt, the slower it will be t
       <p><b>NOTE</b></p>  
       <p>If the format string does not contain the username placeholder (<samp>\u</samp> for <i>bash</i>, for example), then the username of the current interactive user will not be displayed; however, any other text in this variable will still be displayed.</p>
     </blockquote>
-    <p>If you don't want to display the username portion of the shell prompt, omit the <samp>%u</samp> format specifier when setting <samp>SH_PS1_FORMAT_STRING</samp>. See below for more details.</p>
+    <p>If you don't want to display the username portion of the shell prompt, omit the '<samp>u</samp>' format specifier when setting <samp>SH_PS1_FORMAT_STRING</samp>. See below for more details.</p>
   </dd>
   <dd>
       <p><b>EXAMPLE</b></p>
@@ -49,7 +49,7 @@ Just remember, the more text you display in your prompt, the slower it will be t
   <dd>
     <p>Sets the string to be used for separating the <i>username</i> from the <i>hostname</i> when displaying the shell prompt.</p>
     <p>If not declared, null, or empty, then this defaults to the '<samp>@</samp>' character. Otherwise, the value defined is used between the <i>username</i> and <i>hostname</i> portions of the shell prompt format string.</p>
-    <p>If for whatever reason you want no separator between the <i>username</i> and <i>hostname</i> portions of the shell prompt, then omit the <samp>%z</samp> format specifier in <samp>SH_PS1_FORMAT_STRING<samp> instead. See below for more details.</p>
+    <p>If for whatever reason you want no separator between the <i>username</i> and <i>hostname</i> portions of the shell prompt, then omit the '<samp>z</samp>' format specifier in <samp>SH_PS1_FORMAT_STRING<samp> instead. See below for more details.</p>
 </dd>
 <dt>SH_PS1_HOSTNAME</dt>
 <dd>
@@ -59,7 +59,7 @@ Just remember, the more text you display in your prompt, the slower it will be t
     <p><b>NOTE</b></p>
     <p>If the format string does not contain the hostname placeholder token (<samp>\h</samp> for <i>bash</i>, for example), then the <i>hostname</i> will not be displayed; however, any other text in this variable will still be displayed.</p>
   </blockquote>
-  <p>If you don't want to display the <i>hostname</i> portion of the shell prompt,  omit the <samp>%h</samp> format specifier in <samp>SH_PS1_FORMAT_STRING</samp>.  See below for more details.
+  <p>If you don't want to display the <i>hostname</i> portion of the shell prompt,  omit the '<samp>h</samp>' format specifier in <samp>SH_PS1_FORMAT_STRING</samp>.  See below for more details.
   </p>
 </dd>
 <dt>SH_PS1_PWD</dt>
@@ -70,7 +70,7 @@ Just remember, the more text you display in your prompt, the slower it will be t
     <p><b>NOTE</b></p>
     <p> If the format string does not contain the PWD placeholder token (<samp>\w</samp> for <i>bash</i>, for example), then the PWD will not be displayed; however, any other text in this variable will still be displayed.</p>
   </blockquote>
-  <p>If you don't want to display the PWD portion of the shell prompt,  omit the <samp>%w</samp> format specifier in <samp>SH_PS1_FORMAT_STRING</samp>.  See below for more details.
+  <p>If you don't want to display the PWD portion of the shell prompt,  omit the '<samp>w</samp>' format specifier in <samp>SH_PS1_FORMAT_STRING</samp>.  See below for more details.
   <p>
 </dd>
 <dt>SH_PS1_PROMPT</dt>
@@ -127,11 +127,11 @@ $</pre>
 </dl>
 
 > **NOTE**  
-> Unless you require or desire complex shell prompt colorization, you should place all color information for the various aspects of your prompt in the color format string variables discussed in the next section. Placing prompt color information in the formatting variables discussed above could result in unpredictable behavior and may flat out not work.
+> Unless you require or desire complex shell prompt colorization, you should place most color information for the various aspects of your prompt in the color format string variables discussed in the next section.
 >  
 > Remember, the more text you provide in the various pieces of your prompt (including any color information), the slower it will be to display your prompt.
 > 
-> Finally, remember, you should not place any other text in the <samp>SH_PS1_FORMAT_STRING</samp> variable except for the tokens that were listed in th table above. Any other text in this environment variable will most likely result in your prompt not working as expected, if at all.
+> Finally, remember, you should not place any other text in the <samp>SH_PS1_FORMAT_STRING</samp> variable except for the tokens that were listed in the table above. Any other text in this environment variable will most likely result in your prompt not working as expected, if at all.
 
 ###Shell Prompt Color Format String Variables
 The environment variables listed below can be used to customize the colorization of various parts of your shell prompt. You should refrain from including any textual information in these format strings (unless you want or need more complex customization of portions of your shell prompt). Any text other than _command-substitution_ calls to `tput` (or ANSI/VT-100 color escape sequences) may result in unpredictable behavior of this script and is stricty unsupported.
@@ -457,7 +457,7 @@ The following list describes the available format string environment variables t
   </dd>
   <dt>GIT_PS1_SHOWUPSTREAM_SEPARATOR</dt>
   <dd>
-    <p>If this variable is declared and set to a non-null, non-empty value, the value of this environment variable is used between the ahead/behind information displayed when <samp>GIT_PS1_SHOWUPSTREAM</samp> is set to a non-empty value. For example, if <code>GIT_PS1_SHOWUPSTREAM_SEPARATOR="|"</code>, a diverged branch would display as <samp>{bc}<|>{ac}</samp>.
+    <p>If this variable is declared and set to a non-null, non-empty value, the value of this environment variable is used between the ahead/behind information displayed when <samp>GIT_PS1_SHOWUPSTREAM</samp> is set to a non-empty value. For example, if <code>GIT_PS1_SHOWUPSTREAM_SEPARATOR="|"</code>, a diverged branch would display as <samp>{bc}&lt;|&gt;{ac}</samp>.
     </p>
   </dd>
   <dt>GIT_PS1_INITIALCOMMIT</dt>
@@ -479,6 +479,49 @@ The following list describes the available format string environment variables t
   <dt>GIT_PS1_STASHSTATE</dt>
   <dd>
     <p>When <samp>GIT_PS1_SHOWSTASHSTATE</samp> is set to a non-empty value, this environment variable determines the text that is displayed for a repository when that repository has changes which have been stashed. The default text that is displayed when a repository has stashed changes is '<samp>$</samp>'.</p>
+  </dd>
+  <dt>GIT_PS1_DIRTYSTATE_FORMAT</dt>
+  <dd>
+  <p>When <samp>GIT_PS1_SHOWDIRTYSTATE</samp> is set to a non-empty value, this environment variable can contain tokens which specify in what order the dirty state information for the branch will appear.</p>
+  <p>If this variable is undeclared, null, or empty, it defaults to <samp>"wisu"</samp>. By default, this results in the following branch information being displayed:</p>
+  <pre>feature/my_special_feature *+$%</pre>
+  <p>The meaning of each of the format tokens is listed in the table below:</p>
+  <table summary="GIT_PS1_DIRTYSTATE_FORMAT token descriptions.">
+	  <thead>
+	    <tr>
+	      <th scope="col">Format Token</th>
+	      <th scope="col">Description</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    <tr>
+	      <td align="center"><samp>w</samp></td>
+	      <td>Causes the string defined in <samp>GIT_PS1_UNSTAGEDCHANGES</samp> to be displayed when your working index contains unstaged changes.
+	      </td>
+	    </tr>
+	    <tr>
+	      <td align="center"><samp>i</samp></td>
+	      <td>Causes the string defined in <samp>GIT_PS1_STAGEDCHANGES to be displayed when your index contains staged changes.
+	      </td>
+	    </tr>
+	    <tr>
+	      <td align="center"><samp>s</samp></td>
+	      <td>Causes the string defined in <samp>GIT_PS1_STASHSTATE</samp> to be displayed when your repository contains stashed changesets.
+	      </td>
+	    </tr>
+	    <tr>
+	      <td align="center"><samp>u</samp></td>
+	      <td>Causes the string defined in <samp>GIT_PS1_UNTRACKEDFILES</samp> to be displayed when your working index contains untracked files.
+	      </td>
+	    </tr>
+	  </tbody>
+	</table>
+    <p>Some notes regarding the use of this variable:</p>
+    <ol>
+      <li>You can place these tokens in any order.</li>
+      <li>This variable should only contain these tokens and no other text. Any other text included in this variable may result in unpredictable and unsupported behavior.</li>
+      <li>Any spacing and formatting you require for your desired git repository branch dirty state should be defined through the individual format string variables discussed above and the color fromat string variables discussed in the following section..</li>
+    </ol>
   </dd>
 </dl>
 
