@@ -480,13 +480,13 @@ The following list describes the available format string environment variables t
   <dd>
     <p>When <samp>GIT_PS1_SHOWSTASHSTATE</samp> is set to a non-empty value, this environment variable determines the text that is displayed for a repository when that repository has changes which have been stashed. The default text that is displayed when a repository has stashed changes is '<samp>$</samp>'.</p>
   </dd>
-  <dt>GIT_PS1_DIRTYSTATE_FORMAT</dt>
+  <dt>GIT_PS1_BRANCHSTATE_FORMAT</dt>
   <dd>
-  <p>When <samp>GIT_PS1_SHOWDIRTYSTATE</samp> is set to a non-empty value, this environment variable can contain tokens which specify in what order the dirty state information for the branch will appear.</p>
+  <p>When <samp>GIT_PS1_SHOWDIRTYSTATE</samp>, <samp>GIT_PS1_SHOWUNTRACKEDFILES</samp>, and/or <samp>GIT_PS1_SHOWSTASHSTATE</samp> are set to a non-empty value, this environment variable can contain tokens which specify in what order the branch state information for the branch will appear.</p>
   <p>If this variable is undeclared, null, or empty, it defaults to <samp>"wisu"</samp>. By default, this results in the following branch information being displayed:</p>
   <pre>feature/my_special_feature *+$%</pre>
   <p>The meaning of each of the format tokens is listed in the table below:</p>
-  <table summary="GIT_PS1_DIRTYSTATE_FORMAT token descriptions.">
+  <table summary="GIT_PS1_BRANCHSTATE_FORMAT token descriptions.">
 	  <thead>
 	    <tr>
 	      <th scope="col">Format Token</th>

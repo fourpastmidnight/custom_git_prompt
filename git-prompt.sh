@@ -370,8 +370,8 @@ __git_ps1 ()
 	local ps1pc_end='\$ '
 	local printf_format=' (%s)'
 	
-	# Customized dirty state format string used when GIT_PS1_SHOWDIRTYSTATE is set.
-	local dirtystate_format="${GIT_PS1_DIRTYSTATE_FORMAT:-wisu}"
+	# Customized branch state format string used when GIT_PS1_SHOWDIRTYSTATE, GIT_PS1_SHOWSTASHSTATE, and GIT_PS1_SHOWUNTRACKEDFILES are set.
+	local branchstate_format="${GIT_PS1_BRANCHSTATE_FORMAT:-wisu}"
 	# Customized Git String Glyphs
 	local staged_changes="${GIT_PS1_STAGEDCHANGES:-+}"
 	local unstaged_changes="${GIT_PS1_UNSTAGEDCHANGES:-*}"
@@ -595,9 +595,9 @@ __git_ps1 ()
 	fi
 
 	local f
-	for ((x=0; x<${#dirtystate_format}; x++))
+	for ((x=0; x<${#branchstate_format}; x++))
 	{
-		case "${dirtystate_format[0]:$x:1}" in
+		case "${branchstate_format[0]:$x:1}" in
 			"w") f="$f$w" ;;
 			"i") f="$f$i" ;;
 			"s") f="$f$s" ;;
