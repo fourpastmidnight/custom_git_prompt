@@ -44,33 +44,12 @@ export LESS_TERMCAP_so=$'\E[01;44;33m'
 export LESS_TERMCAP_ue=$'\E[0m'
 export LESS_TERMCAP_us=$'\E[01;32m'
 
-#GIT_PS1_SHOWUPSTREAM_GLYPH: One of none|arrow|rlarrowhead|udarrowhead|rltri|udtri|custom
-#GIT_PS1_SHOWUPSTREAM_GLYPH=""
-#GIT_PS1_SHOWUPSTREAM_CUSTOM_AHEAD_GLYPH=""
-#GIT_PS1_SHOWUPSTREAM_CUSTOM_BEHIND_GLYPH=""
-#GIT_PS1_SHOWUPSTRAM_CUSTOM_DIVERGED_GLYPH=""
-
-#GIT_PS1_SHOWUPSTREAM_USE_SEPARATOR=0
-#GIT_PS1_SHOWUPSTREAM_SEPARATOR_GLYPH="|"
-
-#GIT_PS1_DETACHED_HEAD_COLOR="$(tput setaf 9)"
-#GIT_PS1_OK_BRANCH_COLOR="$(tput setaf 2)"
-#GIT_PS1_INITIAL_COMMIT_GLYPH="#"
-#GIT_PS1_INITIAL_COMMIT_GLYPH_COLOR="$(tput setaf 2)"
-#GIT_PS1_STAGED_FILES_GLYPH="+"
-#GIT_PS1_STAGED_FILES_GLYPH_COLOR="$(tput setaf 2)"
-#GIT_PS1_UNTRACKED_FILES_GLYPH="%"
-#GIT_PS1_UNTRACKED_FILES_GLYPH_COLOR="$(tput setaf 1)"
-#GIT_PS1_UNSTAGED_FILES_GLYPH="*"
-#GIT_PS1_UNSTAGED_FILES_GLYPH_COLOR="$(tput setaf 1)"
-#GIT_PS1_STASHED_STATE_GLYPH="$"
-#GIT_PS1_STASHED_STATE_GLYPH_COLOR="$(tput setaf 4)"
-
-#GIT_PS1_SHOWDIRTYSTATE=1
-#GIT_PS1_SHOWSTASHSTATE=1
-#GIT_PS1_SHOWUNTRACKEDFILES=1
-#GIT_PS1_SHOWCOLORHINTS=1
+#GIT_PS1_SHOWDIRTYSTATE=
+#GIT_PS1_SHOWSTASHSTATE=
+#GIT_PS1_SHOWUNTRACKEDFILES=
+#GIT_PS1_SHOWCOLORHINTS=
 #GIT_PS1_SHOWUPSTREAM="auto git verbose"
+#GIT_PS1_SHOWSHORTSHA=
 
 # GIT_PS1_DESCRIBE_STYLE
 #  -- contains  - Looks forward in the tree for a tag, so you know which tag you're behind.
@@ -78,9 +57,86 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 #  -- describe  - Looks backwards in the tree for a tag so you know which tag you're ahead of.
 #  -- (default) - If you're exactly on a tag, display it. If the method you choose fails to find a
 #                 tag/branch to display, you'll see the commit id instead. 
-#GIT_PS1_DESCRIBE_STYLE="branch"
+#GIT_PS1_DESCRIBE_STYLE=""
+
+#GIT_PS1_SHOWUPSTREAM_STYLE: One of default|arrow|rlarrowhead|udarrowhead|rltri|udtri|custom
+#GIT_PS1_SHOWUPSTREAM_STYLE="default"
+#GIT_PS1_SHOWUPSTREAM_CUSTOM_AHEAD=""
+#GIT_PS1_SHOWUPSTREAM_CUSTOM_BEHIND=""
+#GIT_PS1_SHOWUPSTREAM_CUSTOM_DIVERGED=""
+#GIT_PS1_SHOWUPSTREAM_CUSTOM_UPTODATE=""
+
+#GIT_PS1_SHOWUPSTREAM_USE_SEPARATOR=0
+#GIT_PS1_SHOWUPSTREAM_SEPARATOR=""
+
+#GIT_PS1_INITIALCOMMIT="#"
+#GIT_PS1_STAGEDCHANGES="+"
+#GIT_PS1_UNSTAGEDCHANGES="*"
+#GIT_PS1_UNTRACKEDFILES="%"
+#GIT_PS1_STASHEDSTATE="$"
+#GIT_PS1_BRANCHSTATE_FORMAT="wisu"
+#GIT_PS1_BRANCH_FORMAT="hbs"
+
+# GIT_PS1_SHOWBRANCHSTATE
+#  -- default - Branch state is shown normally (i.e. only when (un)staged commits,
+#               untracked files, or stashed changesets exist and the appropriate
+#               variables have been enabled (e.g. GIT_PS1_SHOW*STATE, GIT_PS1_SHOWUNTRACKEDFILES)
+#               and GIT_PS1_SHOWCOLORHINTS is set to a non-null, non-empty value.
+#
+#  -- auto    - The branch status indicators are always displayed. When the status
+#               for a particular indicator is "clean", the indicator is displayed
+#               in the GIT_PS1_BRANCHSTATE_CLEAN_COLOR color.
+#GIT_PS1_SHOWBRANCHSTATE="default"
+
+#GIT_PS1_CLEANSTATE_COLOR="$(tput setf 7)"
+#GIT_PS1_DETACHEDHEAD_COLOR="$(tput setaf 9)"
+#GIT_PS1_OKBRANCH_COLOR="$(tput setaf 2)"
+#GIT_PS1_INITIALCOMMIT_COLOR="$(tput setaf 2)"
+#GIT_PS1_STAGEDCHANGES_COLOR="$(tput setaf 2)"
+#GIT_PS1_NOSTAGEDCHANGES_COLOR="$(tput setaf 240)"
+#GIT_PS1_UNSTAGEDCHANGES_COLOR="$(tput setaf 1)"
+#GIT_PS1_NOUNSTAGEDCHANGES_COLOR="$(tput setaf 240)"
+#GIT_PS1_UNTRACKEDFILES_COLOR="$(tput setaf 1)"
+#GIT_PS1_NOUNTRACKEDFILES_COLOR="$(tput setaf 240)"
+#GIT_PS1_STASHEDSTATE_COLOR="$(tput setaf 4)"
+#GIT_PS1_NOSTASHSTATE_COLOR="$(tput setaf 240)"
+
+# WARNING: Enabling this option will significantly slow down your prompt when in a git repository!!
+#GIT_PS1_SHOWSTATE_COUNTS=0
+
+#SH_PS1_DONT_COLORIZE_PROMPT=0
+
+#SH_PS1_USERNAME_COLOR="$(tput setaf 2)"
+#SH_PS1_HOSTNAME_COLOR="$(tput setaf 2)"
+#SH_PS1_USER_HOST_SEPARATOR_COLOR="$(tput setaf 2)"
+#SH_PS1_PWD_COLOR="$(tput setaf 3)"
+#SH_PS1_PROMPT_COLOR="$(tput sgr0)"
+
+#SH_PS1_USERNAME="\u"
+#SH_PS1_HOSTNAME="\h"
+#SH_PS1_USER_HOST_SEPARATOR="@"
+#SH_PS1_PWD=" \w"
+
+#SH_PS1_PROMPT="\n\\\$ "
+#SH_PS1_FORMAT_STRING="uzhwv"
 
 # Fixup git-bash in non login env
-shopt -q login_shell || . /etc/profile.d/git-prompt.sh
+if [[ -e ~/.sh-prompt.sh ]]; then
+	. ~/.bash-prompt.sh
+elif [[ -e ~/sh-prompt.sh ]]; then
+	. ~/bash-prompt.sh
+elif [[ -e ~/.git-prompt.sh ]]; then
+	shopt -q login_shell || . ~/.git-prompt.sh
+	PROMPT_COMMAND='__git_ps1 "$(tput setaf 2)\u@\h $(tput setaf 3)\w$(tput sgr0)" "\n\\\$ " " (%s)"'
+	return
+elif [[ -e ~/git-prompt.sh ]]; then
+	shopt -q login_shell || . ~/git-prompt.sh
+	PROMPT_COMMAND='__git_ps1 "$(tput setaf 2)\u@\h $(tput setaf 3)\w$(tput sgr0)" "\n\\\$ " " (%s)"'
+	return
+else
+	shopt -q login_shell || . /etc/profile.d/git-prompt.sh
+	PROMPT_COMMAND='__git_ps1 "$(tput setaf 2)\u@\h $(tput setaf 3)\w$(tput sgr0)" "\n\\\$ " " (%s)"'
+	return
+fi
 
-PROMPT_COMMAND='__git_ps1 "$(tput setaf 2)\u@\h $(tput setaf 5)$MSYSTEM $(tput setaf 3)\w$(tput sgr0)" "\n\\\$ "'
+PROMPT_COMMAND='__sh_ps1'
