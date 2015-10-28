@@ -331,7 +331,7 @@ __git_ps1_colorize_gitstring ()
 	if [ "$w" = "${unstaged_changes}" ]; then
 		w="${GIT_PS1_UNSTAGEDCHANGES_COLOR:-$bad_color}$w$c_clear"
 	elif [ $always_show_branch_state = 0 ]; then
-		w="$cleanstate_color${unstaged_changes}$c_clear"
+		w="${GIT_PS1_NOUNSTAGEDCHANGES_COLOR:-$cleanstate_color}${unstaged_changes}$c_clear"
 	fi
 	if [ -n "$i" ]; then
 		if [ "$i" = "${initial_commit}" ]; then
@@ -340,17 +340,17 @@ __git_ps1_colorize_gitstring ()
 			i="${GIT_PS1_STAGEDCHANGES_COLOR:-$ok_color}$i$c_clear"
 		fi
 	elif [ $always_show_branch_state = 0 ]; then
-		i="$cleanstate_color${i:-$staged_changes}$c_clear"
+		i="${GIT_PS1_NOSTAGEDCHANGES_COLOR:-$cleanstate_color}${i:-$staged_changes}$c_clear"
 	fi
 	if [ -n "$s" ]; then
 		s="${GIT_PS1_STASHSTATE_COLOR:-$flags_color}$s$c_clear"
 	elif [ $always_show_branch_state = 0 ]; then
-		s="$cleanstate_color$stash_state$c_clear"
+		s="${GIT_PS1_NOSTASHSTATE_COLOR:-$cleanstate_color}$stash_state$c_clear"
 	fi
 	if [ -n "$u" ]; then
 		u="${GIT_PS1_UNTRACKEDFILES_COLOR:-$bad_color}$u$c_clear"
 	else
-		u="$cleanstate_color$untracked_files$c_clear"
+		u="${GIT_PS1_NOUNTRACKEDFILES_COLOR:-$cleanstate_color}$untracked_files$c_clear"
 	fi
 	r="$c_clear$r"
 }
