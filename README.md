@@ -604,11 +604,13 @@ In the following sections, several examples of variable values will be shown and
 
 ##Planned, Future Enhancements
 
-1. Create a "build system" that would allow for creating a "theme" that would then generate the required environment variable values and example code which could be placed in your `.bashrc`.
-2. Create a set of pre-defined "themes".
-3. Look into customizing other git scripts colors (e.g. git status).
+1. Test the modifications in ZSH. They appear that they should work out of the box, but no formal testing has yet been performed.
+2. Create a "build system" that would allow for creating a "theme" that would then generate the required environment variable values and example code which could be placed in your `.bashrc`.
+3. Create a set of pre-defined "themes".
+4. Look into customizing other git scripts colors (e.g. git status).
     * I find the default red and green colors a bit too dark and saturated for my liking (too hard to see on a black background), which is what spawned these customizations to begin with.
-4. Look into contributing these customizations to Git for Windows. Is there any interest in providing this level of customizability in Git for Windows proper (or perhaps even git itself)??
+	* I looked through the `git config --help` documentation, and apparently there are many options that can be set to change the colors output by various scripts; so I won't reinvent the wheel unless I am able to provide customizations above and beyond what the standard tools allow you to do and which will add value and which will not have a significant impact on the amount of time it takes to process the command.
+5. Look into contributing these customizations to Git for Windows. Is there any interest in providing this level of customizability in Git for Windows proper (or perhaps even git itself)??
     * I'm open to comments on this. If there's little to no interest, then I'll just keep these customizations here.
 
 > Written with [StackEdit](https://stackedit.io/).
