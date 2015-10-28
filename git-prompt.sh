@@ -318,7 +318,7 @@ __git_ps1_colorize_gitstring ()
 	
 	# Support always displaying branch state info
 	local always_show_branch_state="$(echo ${GIT_PS1_SHOWBRANCHSTATE} | grep -c always >/dev/null; echo $?)"
-	local branch_clean_color="${GIT_PS1_BRANCHSTATE_CLEAN_COLOR:-$(tput setf 7)}"
+	local cleanstate_color="${GIT_PS1_CLEANSTATE_COLOR:-$(tput setf 7)}"
 	
 	if [ $detached = no ]; then
 		branch_color="${GIT_PS1_OKBRANCH_COLOR:-$ok_color}"
@@ -331,7 +331,7 @@ __git_ps1_colorize_gitstring ()
 	if [ "$w" = "${unstaged_changes}" ]; then
 		w="${GIT_PS1_UNSTAGEDCHANGES_COLOR:-$bad_color}$w$c_clear"
 	elif [ $always_show_branch_state = 0 ]; then
-		w="$branch_clean_color${unstaged_changes}$c_clear"
+		w="$cleanstate_color${unstaged_changes}$c_clear"
 	fi
 	if [ -n "$i" ]; then
 		if [ "$i" = "${initial_commit}" ]; then
@@ -340,17 +340,17 @@ __git_ps1_colorize_gitstring ()
 			i="${GIT_PS1_STAGEDCHANGES_COLOR:-$ok_color}$i$c_clear"
 		fi
 	elif [ $always_show_branch_state = 0 ]; then
-		i="$branch_clean_color${i:-$staged_changes}$c_clear"
+		i="$cleanstate_color${i:-$staged_changes}$c_clear"
 	fi
 	if [ -n "$s" ]; then
 		s="${GIT_PS1_STASHSTATE_COLOR:-$flags_color}$s$c_clear"
 	elif [ $always_show_branch_state = 0 ]; then
-		s="$branch_clean_color$stash_state$c_clear"
+		s="$cleanstate_color$stash_state$c_clear"
 	fi
 	if [ -n "$u" ]; then
 		u="${GIT_PS1_UNTRACKEDFILES_COLOR:-$bad_color}$u$c_clear"
 	else
-		u="$branch_clean_color$untracked_files$c_clear"
+		u="$cleanstate_color$untracked_files$c_clear"
 	fi
 	r="$c_clear$r"
 }

@@ -86,7 +86,7 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 #               in the GIT_PS1_BRANCHSTATE_CLEAN_COLOR color.
 #GIT_PS1_SHOWBRANCHSTATE="default"
 
-#GIT_PS1_BRANCHSTATE_CLEAN_COLOR="$(tput setf 7)"
+#GIT_PS1_CLEANSTATE_COLOR="$(tput setf 7)"
 #GIT_PS1_DETACHEDHEAD_COLOR="$(tput setaf 9)"
 #GIT_PS1_OKBRANCH_COLOR="$(tput setaf 2)"
 #GIT_PS1_INITIALCOMMIT_COLOR="$(tput setaf 2)"

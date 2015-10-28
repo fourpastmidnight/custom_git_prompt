@@ -540,7 +540,7 @@ The following list describes the available format string environment variables t
         </tr>
         <tr>
           <td align="center"><code>always</code></td>
-          <td>When <samp>GIT_PS1_SHOWCOLORHINTS</samp> is set to a non-null, non-empty value and one or more of <samp>GIT_PS1_SHOWDIRTYSTATE</samp>, <samp>GIT_PS1_SHOWSTASHSTATE</samp> or <samp>GIT_PS1_SHOWUNTRACKEDFILES</samp> are set to a non-null, non-empty value, the enabled indicators are always shown in the color specified by <samp>GIT_PS1_BRANCHSTATE_CLEAN_COLOR</samp>, which defaults to <code>$(tput setf 7)</code>.</td>
+          <td>When <samp>GIT_PS1_SHOWCOLORHINTS</samp> is set to a non-null, non-empty value and one or more of <samp>GIT_PS1_SHOWDIRTYSTATE</samp>, <samp>GIT_PS1_SHOWSTASHSTATE</samp> or <samp>GIT_PS1_SHOWUNTRACKEDFILES</samp> are set to a non-null, non-empty value, the enabled indicators are always shown in the color specified by <samp>GIT_PS1_CLEANSTATE_COLOR</samp>, which defaults to <code>$(tput setf 7)</code>.</td>
         </tr>
       </tbody>
     </table>
@@ -555,7 +555,7 @@ The following list describes the available color format string environment varia
   <dd>When <samp>GIT_PS1_SHOWCOLORHINTS</samp> is set to a non-empty value, a detached head will be displayed in the color specified by this environment variable. If this environment variable is undeclared, the default value of <code>$(tput setaf 1)</code> (red) is used.</dd>
   <dt>GIT_PS1_OKBRANCH_COLOR</dt>
   <dd>When <samp>GIT_PS1_SHOWCOLORHINTS</samp> is set to a non-empty value, a branch which is set to track a valid remote branch will be displayed in the color specified by this environment variable. If this environment variable is undeclared, the default value of <code>$(tput setaf 2)</code> (green) will be used.</dd>
-  <dt>GIT_PS1_BRANCHSTATE_CLEAN_COLOR</dt>
+  <dt>GIT_PS1_CLEANSTATE_COLOR</dt>
   <dd>
     <p>When <samp>GIT_PS1_SHOWBRANCHSTATE</samp> is set to <code>always</code>, the enabled branch status indicators are displayed in this color. For example, if you have configured GIT_PS1_SHOWDIRTYSTATE to a non-null, non-empty value, then the <samp>GIT_PS1_DIRTYSTATE</samp> indicator (that is displayed for unstaged commits) will always be shown. The default value of this variable if not declared or null or empty is <code>$(tput setf 7)</code>.
     </p>
