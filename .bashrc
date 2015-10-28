@@ -75,6 +75,18 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 #GIT_PS1_STASHEDSTATE="$"
 #GIT_PS1_BRANCHSTATE_FORMAT="wisu"
 
+# GIT_PS1_SHOWBRANCHSTATE
+#  -- default - Branch state is shown normally (i.e. only when (un)staged commits,
+#               untracked files, or stashed changesets exist and the appropriate
+#               variables have been enabled (e.g. GIT_PS1_SHOW*STATE, GIT_PS1_SHOWUNTRACKEDFILES)
+#               and GIT_PS1_SHOWCOLORHINTS is set to a non-null, non-empty value.
+#
+#  -- auto    - The branch status indicators are always displayed. When the status
+#               for a particular indicator is "clean", the indicator is displayed
+#               in the GIT_PS1_BRANCHSTATE_CLEAN_COLOR color.
+#GIT_PS1_SHOWBRANCHSTATE="default"
+
+#GIT_PS1_BRANCHSTATE_CLEAN_COLOR="$(tput setf 7)"
 #GIT_PS1_DETACHEDHEAD_COLOR="$(tput setaf 9)"
 #GIT_PS1_OKBRANCH_COLOR="$(tput setaf 2)"
 #GIT_PS1_INITIALCOMMIT_COLOR="$(tput setaf 2)"
