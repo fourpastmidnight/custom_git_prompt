@@ -99,6 +99,9 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 #GIT_PS1_STASHEDSTATE_COLOR="$(tput setaf 4)"
 #GIT_PS1_NOSTASHSTATE_COLOR="$(tput setaf 240)"
 
+# WARNING: Enabling this option will significantly slow down your prompt when in a git repository!!
+#GIT_PS1_SHOWSTATE_COUNTS=0
+
 #SH_PS1_DONT_COLORIZE_PROMPT=0
 
 #SH_PS1_USERNAME_COLOR="$(tput setaf 2)"

@@ -362,6 +362,21 @@ __git_eread ()
 	test -r "$f" && read "$@" <"$f"
 }
 
+__git_get_state_count ()
+{
+	case "${GIT_PS1_SHOWSTATE_COUNTS:-0}" in
+		"1")
+			case "$1" in
+				"i")	git status -s | grep -c "^[AD] " ;;
+				"w")	git status -s | grep -c "^ M " ;;
+				"u")	git status -s | grep -c "^?? " ;;
+			esac
+			;;
+		*)	echo ""
+			;;
+	esac
+}
+
 # __git_ps1 accepts 0 or 1 arguments (i.e., format string)
 # when called from PS1 using command substitution
 # in this mode it prints text to add to bash PS1 prompt (includes branch name)
@@ -563,9 +578,9 @@ __git_ps1 ()
 		if [ -n "${GIT_PS1_SHOWDIRTYSTATE-}" ] &&
 		   [ "$(git config --bool bash.showDirtyState)" != "false" ]
 		then
-			git diff --no-ext-diff --quiet --exit-code || w="${unstaged_changes}"
+			git diff --no-ext-diff --quiet --exit-code || w="$(__git_get_state_count w)${unstaged_changes}"
 			if [ -n "$short_sha" ]; then
-				git diff-index --cached --quiet HEAD -- || i="${staged_changes}"
+				git diff-index --cached --quiet HEAD -- || i="$(__git_get_state_count i)${staged_changes}"
 			else
 				i="${initial_commit}"
 			fi
@@ -583,9 +598,9 @@ __git_ps1 ()
 			# If running in ZSH, and untracked_files contains one or more '%' symbols,
 			# escape them as '%%' to display the literal '%' character.
 			if [ -n "${ZSH_VERSION}" ] && echo "${untracked_files}" | grep -c "%" >/dev/null; then
-				u="${ZSH_VERSION+${untracked_files//\%/\%\%}}"
+				u="$(__git_get_state_count u)${ZSH_VERSION+${untracked_files//\%/\%\%}}"
 			else
-				u="${untracked_files}"
+				u="$(__git_get_state_count u)${untracked_files}"
 			fi
 		fi
 

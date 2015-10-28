@@ -545,6 +545,14 @@ The following list describes the available format string environment variables t
       </tbody>
     </table>
   </dd>
+  <dt>GIT_PS1_SHOWSTATE_COUNTS</dt>
+  <dd>
+    <p>This environment variable, when set to <code>1</code> will show the number of added/deleted files, unstaged changes, and untracked files to the left of the defined branch state indicators.</p>
+	<blockquote>
+	  <p><b>WARNING</b></p>
+	  <p>Enabling this option <em>will</em> significantly slow down the display of your prompt after executing commands when inside a git repository. Only enable this option if your repository is small and you really really want to see this information.</p>
+	</blockquote>
+  </dd>
 </dl>
 
 ####Color Format Strings
