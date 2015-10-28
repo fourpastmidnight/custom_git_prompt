@@ -480,6 +480,40 @@ The following list describes the available format string environment variables t
   <dd>
     <p>When <samp>GIT_PS1_SHOWSTASHSTATE</samp> is set to a non-empty value, this environment variable determines the text that is displayed for a repository when that repository has changes which have been stashed. The default text that is displayed when a repository has stashed changes is '<samp>$</samp>'.</p>
   </dd>
+  <dt>GIT_PS1_SHOWSHORTSHA</dt>
+  <dd>When set to <code>1</code>, this shows the short SHA commit id for the current branch's <samp>HEAD</samp> according to the format specified in <samp>GIT_PS1_SHORTSHA_FORMAT</samp>.</dd>
+  <dt>GIT_PS1_SHORTSHA_FORMAT</dt>
+  <dd>This environment variable allows you to determine how the short SHA commit id for the current branche's <samp>HEAD</samp> is displayed. The default value is <code>({s})</code>, e.g. <samp>(8e38bf4)</samp>. Note that <code>{s}</code> reperesents the placeholder for the SHA. So you cannot use <code>{s}</code> in any part of the value of this variable unless you want it to be replaced with the short SHA. You can specify color information in the <samp>GIT_PS1_SHORTSHA_COLOR</samp> environment variable.</dd>
+  <dt>GIT_PS1_BRANCH_FORMAT</dt>
+  <dd>
+	<p>This environment variable contains tokens that determines the display order of git branch information in your shell prompt. The table below shows the tokens that this variable supports, and their meaning.</p>
+    <table summary="GIT_PS1_BRANCH_FORMAT token descriptions.">
+      <thead>
+        <tr>
+          <th scope="col">Format Token</th>
+		  <th scope="col">Description</th>
+		</tr>
+	  </thead>
+	  <tbody>
+	    <tr>
+		  <td align="center"><samp>h</samp></td>
+		  <td>If <samp>GIT_PS1_SHOWSHORTSHA</samp> is set to <code>1</code>, this token displays the short form of the SHA commit ID of the <samp>HEAD</samp> ref for the current branch, using the format specified in <samp>GIT_PS1_SHORTSHA_FORMAT</samp>. The default value of this variable is <code>0</code>.</td>
+		</tr>
+		<tr>
+		  <td align="center"><samp>b</samp></td>
+		  <td>This token is replaced with the current repository's checked out branch name.</td>
+		</tr>
+		<tr>
+		  <td align="center"><samp>s</samp></td>
+		  <td>When <samp>GIT_PS1_SHOWBRANCHSTATE</samp> is set to <code>1</code>, this token is replaced with the current branch's state information (e.g. (un)staged commits, untracked files, etc.).</td>
+	    </tbody>
+      </table>
+	  <p>The default value of this variable if it is undeclared or empty or null is <code>bs</code>, i.e. show the branch name and the branch state information (if enabled by the value of <samp>GIT_PS1_SHOWBRANCHSTATE</samp>).</p>
+	  <blockquote>
+	    <p><b>WARNING</b></p>
+		<p>Do not use any other text inside this variable other than the tokens listed in the table above. Do not provide any additional formatting in this variable. If you add additional text or formatting to this variable, your prompt likely will not display properly.</p>
+      </blockquote>
+	</dd>
   <dt>GIT_PS1_BRANCHSTATE_FORMAT</dt>
   <dd>
   <p>When <samp>GIT_PS1_SHOWDIRTYSTATE</samp>, <samp>GIT_PS1_SHOWUNTRACKEDFILES</samp>, and/or <samp>GIT_PS1_SHOWSTASHSTATE</samp> are set to a non-empty value, this environment variable can contain tokens which specify in what order the branch state information for the branch will appear.</p>
@@ -576,20 +610,22 @@ The following list describes the available color format string environment varia
   <dd>When <samp>GIT_PS1_SHOWDIRTYSTATE</samp> and <samp>GIT_PS1_SHOWCOLORHINTS</samp> are set to a non-empty value, a repository which has no commits (i.e. a new repository) will display the value of <samp>GIT_PS1_INITIALCOMMIT</samp> next to the branch name using the color specified by this environment variable. If this environment variable is undeclared, the default value of <code>$(tput setaf 2)</code> (green) is used.</dd>
   <dt>GIT_PS1_STAGEDCHANGES_COLOR</dt>
   <dd>When <samp>GIT_PS1_SHOWDIRTYSTATE</samp> and <samp>GIT_PS1_SHOWCOLORHINTS</samp> are set to a non-empty value, a repository which has staged changes will display the value of <samp>GIT_PS1_STAGEDCHANGES</samp> next to the branch name using the color specified by this environment variable. If this environment variable is undeclared, the default value of <code>$(tput setaf 2)</code> (green) is used.</dd>
-<dt>GIT_PS1_NOSTAGEDCHANGES_COLOR</dt>
-<dd>When <samp>GIT_PS1_SHOWCOLORHINTS</samp>, <samp>GIT_PS1_SHOWDIRTYSTATE</samp> are declared and have a non-null, non-empty value and <samp>GIT_PS1_SHOWBRANCHSTATE</samp> is set to <code>always</code>, this color is used to display the <samp>GIT_PS1_STAGEDCHANGES</samp> indicator when there are no staged changes on the branch.</dd>
+  <dt>GIT_PS1_NOSTAGEDCHANGES_COLOR</dt>
+  <dd>When <samp>GIT_PS1_SHOWCOLORHINTS</samp>, <samp>GIT_PS1_SHOWDIRTYSTATE</samp> are declared and have a non-null, non-empty value and <samp>GIT_PS1_SHOWBRANCHSTATE</samp> is set to <code>always</code>, this color is used to display the <samp>GIT_PS1_STAGEDCHANGES</samp> indicator when there are no staged changes on the branch.</dd>
   <dt>GIT_PS1_UNSTAGEDCHANGES_COLOR</dt>
   <dd>When <samp>GIT_PS1_SHOWDIRTYSTATE</samp> and <samp>GIT_PS1_SHOWCOLORHINTS</samp> are set to a non-empty value, a repository which has unstaged changes will display the value of <samp>GIT_PS1_UNSTAGEDCHANGES</samp> next to the branch name using the color specified by this environment variable. If this environment variable is undeclared, the default value of <code>$(tput setaf 1)</code> (red) is used.</dd>
-<dt>GIT_PS1_NOUNSTAGEDCHANGES_COLOR</dt>
-<dd>When <samp>GIT_PS1_SHOWCOLORHINTS</samp>, <samp>GIT_PS1_SHOWDIRTYSTATE</samp> are declared and have a non-null, non-empty value and <samp>GIT_PS1_SHOWBRANCHSTATE</samp> is set to <code>always</code>, this color is used to display the <samp>GIT_PS1_UNSTAGEDCHANGES</samp> indicator when there are no unstaged changes on the branch.</dd>
+  <dt>GIT_PS1_NOUNSTAGEDCHANGES_COLOR</dt>
+  <dd>When <samp>GIT_PS1_SHOWCOLORHINTS</samp>, <samp>GIT_PS1_SHOWDIRTYSTATE</samp> are declared and have a non-null, non-empty value and <samp>GIT_PS1_SHOWBRANCHSTATE</samp> is set to <code>always</code>, this color is used to display the <samp>GIT_PS1_UNSTAGEDCHANGES</samp> indicator when there are no unstaged changes on the branch.</dd>
   <dt>GIT_PS1_UNTRACKEDFILES_COLOR</dt>
   <dd>When <samp>GIT_PS1_SHOWUNTRACKEDFILES</samp> and <samp>GIT_PS1_SHOWCOLORHINTS</samp> are set to a non-empty value, a repository which has untracked files will display the value of <samp>GIT_PS1_UNTRACKEDFILES</samp> next to the branch name using the color specified by this environment variable. If this environment variable is undeclared, the default value of <code>$(tput setaf 1)</code> (red) is used.</dd>
-<dt>GIT_PS1_NOUNTRACKEDFILES_COLOR</dt>
-<dd>When <samp>GIT_PS1_SHOWCOLORHINTS</samp>, <samp>GIT_PS1_SHOWDIRTYSTATE</samp> are declared and have a non-null, non-empty value and <samp>GIT_PS1_SHOWBRANCHSTATE</samp> is set to <code>always</code>, this color is used to display the <samp>GIT_PS1_UNTRACKEDFILES</samp> indicator when there are no untracked files on the branch.</dd>
+  <dt>GIT_PS1_NOUNTRACKEDFILES_COLOR</dt>
+  <dd>When <samp>GIT_PS1_SHOWCOLORHINTS</samp>, <samp>GIT_PS1_SHOWDIRTYSTATE</samp> are declared and have a non-null, non-empty value and <samp>GIT_PS1_SHOWBRANCHSTATE</samp> is set to <code>always</code>, this color is used to display the <samp>GIT_PS1_UNTRACKEDFILES</samp> indicator when there are no untracked files on the branch.</dd>
   <dt>GIT_PS1_STASHSTATE_COLOR</dt>
   <dd>When <samp>GIT_PS1_SHOWSTASHSTATE</samp> and <samp>GIT_PS1_SHOWCOLORHINTS</samp> are set to a non-empty value, a repository which has stashed changes will display the value of <samp>GIT_PS1_STASHSTATE</samp> next to the branch name using the color specified by this environment variable. If this environment variable is undeclared, the default value of <code>$(tput setaf 4)</code> (blue) is used.</dd>
   <dt>GIT_PS1_NOSTASHSTATE_COLOR</dt>
-<dd>When <samp>GIT_PS1_SHOWCOLORHINTS</samp>, <samp>GIT_PS1_SHOWDIRTYSTATE</samp> are declared and have a non-null, non-empty value and <samp>GIT_PS1_SHOWBRANCHSTATE</samp> is set to <code>always</code>, this color is used to display the <samp>GIT_PS1_STASHSTATE</samp> indicator when there are no stashed changesets for the repository.</dd>
+  <dd>When <samp>GIT_PS1_SHOWCOLORHINTS</samp>, <samp>GIT_PS1_SHOWDIRTYSTATE</samp> are declared and have a non-null, non-empty value and <samp>GIT_PS1_SHOWBRANCHSTATE</samp> is set to <code>always</code>, this color is used to display the <samp>GIT_PS1_STASHSTATE</samp> indicator when there are no stashed changesets for the repository.</dd>
+  <dt>GIT_PS1_SHORTSHA_COLOR</dt>
+  <dd>When <samp>GIT_PS1_SHOWCOLORHINTS</samp> and <samp>GIT_PS1_SHOWSHORTSHA</samp> are enabled, the color defined in this variable is used when displaying the short SHA in the <i>git</i> branch information. The default value is <code>$(tput setaf 3)</code>.</dd>
 </dl>
 
 ##Examples of Shell and/or Git Prompt Customization

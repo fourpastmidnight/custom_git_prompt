@@ -49,6 +49,7 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 #GIT_PS1_SHOWUNTRACKEDFILES=
 #GIT_PS1_SHOWCOLORHINTS=
 #GIT_PS1_SHOWUPSTREAM="auto git verbose"
+#GIT_PS1_SHOWSHORTSHA=
 
 # GIT_PS1_DESCRIBE_STYLE
 #  -- contains  - Looks forward in the tree for a tag, so you know which tag you're behind.
@@ -74,6 +75,7 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 #GIT_PS1_UNTRACKEDFILES="%"
 #GIT_PS1_STASHEDSTATE="$"
 #GIT_PS1_BRANCHSTATE_FORMAT="wisu"
+#GIT_PS1_BRANCH_FORMAT="hbs"
 
 # GIT_PS1_SHOWBRANCHSTATE
 #  -- default - Branch state is shown normally (i.e. only when (un)staged commits,

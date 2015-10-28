@@ -319,9 +319,11 @@ __git_ps1_colorize_gitstring ()
 	# Support always displaying branch state info
 	local always_show_branch_state="$(echo ${GIT_PS1_SHOWBRANCHSTATE} | grep -c always >/dev/null; echo $?)"
 	local cleanstate_color="${GIT_PS1_CLEANSTATE_COLOR:-$(tput setf 7)}"
+	local sha_color=""
 	
 	if [ $detached = no ]; then
 		branch_color="${GIT_PS1_OKBRANCH_COLOR:-$ok_color}"
+		sha_color="${GIT_PS1_SHORTSHA_COLOR:-$ok_color}"
 	else
 		branch_color="${GIT_PS1_DETACHEDHEAD_COLOR:-$bad_color}"
 	fi
@@ -351,6 +353,9 @@ __git_ps1_colorize_gitstring ()
 		u="${GIT_PS1_UNTRACKEDFILES_COLOR:-$bad_color}$u$c_clear"
 	else
 		u="${GIT_PS1_NOUNTRACKEDFILES_COLOR:-$cleanstate_color}$untracked_files$c_clear"
+	fi
+	if [ -n "$h" ]; then
+		h="$sha_color$h$c_clear"
 	fi
 	r="$c_clear$r"
 }
@@ -398,6 +403,8 @@ __git_ps1 ()
 	local ps1pc_end='\$ '
 	local printf_format=' (%s)'
 	
+	#Customized branch format string used when GIT_PS1_BRANCH_FORMAT is set.
+	local branch_format="${GIT_PS1_BRANCH_FORMAT:-bf}"
 	# Customized branch state format string used when GIT_PS1_SHOWDIRTYSTATE, GIT_PS1_SHOWSTASHSTATE, and GIT_PS1_SHOWUNTRACKEDFILES are set.
 	local branchstate_format="${GIT_PS1_BRANCHSTATE_FORMAT:-wisu}"
 	# Customized Git String Glyphs
@@ -561,6 +568,7 @@ __git_ps1 ()
 		r="$r $step/$total"
 	fi
 
+	local h=""
 	local w=""
 	local i=""
 	local s=""
@@ -575,6 +583,9 @@ __git_ps1 ()
 			b="GIT_DIR!"
 		fi
 	elif [ "true" = "$inside_worktree" ]; then
+		if [ "$detached" = "no" ] && [ -n "${GIT_PS1_SHOWSHORTSHA:-}" ]; then
+			h="${GIT_PS1_SHORTSHA_FORMAT/\{s\}/$short_sha}"
+		fi
 		if [ -n "${GIT_PS1_SHOWDIRTYSTATE-}" ] &&
 		   [ "$(git config --bool bash.showDirtyState)" != "false" ]
 		then
@@ -632,8 +643,18 @@ __git_ps1 ()
 			"u") f="$f$u" ;;
 		esac
 	}
+	
+	local gitstring=""
+	for ((x=0; x<${#branch_format}; x++))
+	{
+		case "${branch_format[0]:$x:1}" in
+			"h") gitstring="$gitstring$h" ;;
+			"b") gitstring="$gitstring$c$b" ;;
+			"s") gitstring="$gitstring${f:+$z$f}" ;;
+		esac
+	}
 
-	local gitstring="$c$b${f:+$z$f}$r$p"
+	gitstring="$gitstring$r$p"
 
 	if [ $pcmode = yes ]; then
 		if [ "${__git_printf_supports_v-}" != yes ]; then
