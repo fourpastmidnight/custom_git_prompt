@@ -1,4 +1,4 @@
-#Shell Prompt Customization Scripts
+# Shell Prompt Customization Scripts
 
 <!-- Unfortunately, GitHub doesn't support t Pagedown def_list module, nor the TOC module. So there will be a lot of HTML in this markdown document. :(
 [TOC]
@@ -7,7 +7,7 @@ These scripts aim to provide the user the ability to more easily and flexibly ch
 > **NOTE**  
 > <i><abbr title="Z-Shell">zsh</abbr></i> is not currently supported, but support is planned to be included.
 
-##Using the Shell Prompt Customization Scripts
+## Using the Shell Prompt Customization Scripts
 
 To use the Shell Prompt customization scripts, simply copy `sh-prompt.sh` and/or `git-prompt.sh` files to your home directory. On linux, this is typcially accessed by using the alias `~`. On Windows&reg;, your home directory is typically located at `C:\Windows\Users\<your username>`. You can quickly go to the location of your home directory by typing `%USERPROFILE%` into the location bar in Windows Explorer.
 
@@ -17,14 +17,14 @@ Finally, an example `.bashrc` file is provided in this repository. You can use i
 
 The version of `git-prompt.sh` that is supplied with this repository has been modified to allow you to customize the display of git repository information in your shell prompt in more ways than the original `git-prompt.sh` script allows.
 
-##Customizing Your Shell Prompt
+## Customizing Your Shell Prompt
 This section will outline how you can use `sh-prompt.sh` to customize your shell prompt. This section won't discuss customizing the git repository portion of the shell prompt (that will be covered under **Customzing Your Git Format String** below).
 
 The following sections define the environment variables you can set in your `.bashrc` file to customize your shell prompt. Examples of various customizations will be shown afterwards.
 
 As stated in **Using the Shell Prompt Customization Scripts**, you must copy `sh-prompt.sh` to your home directory (either with the same name, or renamed as `.sh-prompt.sh`) and be sourced from your `.bashrc` file (which is typically in the same location) in order for the environment variables discussed below to have any effect on your shell prompt.
 
-###Shell Prompt Textual Format String Variables
+### Shell Prompt Textual Format String Variables
 The environment variables listed below can be used to customize the text that is displayed for each portion of a typical shell prompt. You should refrain from including any color information in these format strings (unless you want or need more complex colorization of portions of your shell prompt).
 
 Just remember, the more text you display in your prompt, the slower it will be to display the prompt. This includes any color information you decide to include in the color format strings discussed in the following section.
@@ -176,14 +176,14 @@ Just remember, the more text you display in your prompt, the slower it will be t
 > 
 > You can experiment with values other than purely color information, but you do so at your own risk.
 
-##Customzing Your Git Format String
+## Customzing Your Git Format String
 `git-prompt.sh` only affects the display of your shell prompt when you are currently in a directory which contains a _git_ repository.
 
 The customized version of `git-prompt.sh` included in this repository allows for enhanced customization of your git repository format string. In the sections that follow, the standard environment variables will be discussed (those that natively come with the `git-prompt.sh` script as supplied by git) and the variables that this customized version of `git-prompt.sh` allow to be set.
 
 As stated above in **Using the Shell Prompt Customization Scripts**, you must copy `git-prompt.sh` to your home directory (either with the same name, or renamed as `.git-prompt.sh`) in order for the environment variables discussed below to have any effect on your shell prompt.
 
-###The Standard `git-prompt.sh` Environment Variables
+### The Standard `git-prompt.sh` Environment Variables
 The following list describes the effects of the standard `git-prompt.sh` environment variables on the display of git repository information in the shell prompt. The core functionality of these environment variables has been preserved by the extended version of this script. The default values of all environment variables used in this extended `git-prompt.sh` script result in the standard, out-of-the-box display of git repository information (which is usually just the currently checked out branch name of the git repository).
 
 Many of the effects of the standard `git-prompt.sh` environment variables can be changed or extended through the use and setting of additional environment variables supported by this extended `git-prompt.sh` script.
@@ -299,14 +299,14 @@ Many of the effects of the standard `git-prompt.sh` environment variables can be
   </dd>
 </dl>
 
-###New `git-prompt.sh` Environment Variables
+### New `git-prompt.sh` Environment Variables
 
 The following list and description of environment variables have been added to this extended version of the `git-prompt.sh` script. The default values of all of these variables results in this extended `git-prompt.sh` script working in exactly the same manner as the standard `git-prompt.sh` script provided with distributions of _git_. These variables can be broken down into two main categories:
 
 1. Information display format strings
 2. Information display colorization
 
-####Display Format Strings
+#### Display Format Strings
 The following list describes the available format string environment variables that will allow you to customize how git repository information is displayed via `__git_ps1`.
 <dl>
   <dt>GIT_PS1_SHOWUPSTREAM_STYLE</dt>
@@ -589,7 +589,7 @@ The following list describes the available format string environment variables t
   </dd>
 </dl>
 
-####Color Format Strings
+#### Color Format Strings
 The following list describes the available color format string environment variables that will allow you to customize how git repository information is colored when displayed via `__git_ps1` as extended in this version of `git-prompt.sh`.
 
 <dl>
@@ -628,17 +628,17 @@ The following list describes the available color format string environment varia
   <dd>When <samp>GIT_PS1_SHOWCOLORHINTS</samp> and <samp>GIT_PS1_SHOWSHORTSHA</samp> are enabled, the color defined in this variable is used when displaying the short SHA in the <i>git</i> branch information. The default value is <code>$(tput setaf 3)</code>.</dd>
 </dl>
 
-##Examples of Shell and/or Git Prompt Customization
+## Examples of Shell and/or Git Prompt Customization
 In the following sections, several examples of variable values will be shown and the resulting shell prompt output will be demonstrated.
 
 **TODO: Add examples here.**
 
-##Notes
+## Notes
 
 1. The available "glyphs" that you choose for various parts of the Git string prompt depend on the font you've chosen to use for your terminal window. For example, the font Consolas has a rather limited set of Unicode characters to choose from, while another font such as DejaVu Sans Mono has many Unicode glyphs to choose from.
 2. The modifications made to `git-prompt.sh` may not be compatable with Z-Shell (zsh). Leave me an issue tracker if you find that to be the case. Better yet, submit a pull request.
 
-##Planned, Future Enhancements
+## Planned, Future Enhancements
 
 1. Test the modifications in ZSH. They appear that they should work out of the box, but no formal testing has yet been performed.
 2. Create a "build system" that would allow for creating a "theme" that would then generate the required environment variable values and example code which could be placed in your `.bashrc`.
